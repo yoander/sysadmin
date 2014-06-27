@@ -15,7 +15,7 @@ if [[ 'root' != $(whoami) ]]; then
     [[ '' == $CMD ]] && { echo You need sudo tool for installing php development dependencies!!!; exit 1; }
 fi
 
-"$CMD $PKG_MNGR" -y install make autoconf gcc libxml2-dev libssl-dev openssl \
+$CMD $PKG_MNGR -y install make autoconf gcc libxml2-dev libssl-dev openssl \
          libpcre3-dev libsqlite3-dev libbz2-dev libcurl4-openssl-dev libgd2-xpm-dev \
          libicu-dev libmcrypt-dev libpq-dev libreadline-dev apache2  apache2-mpm-prefork \
          apache2-prefork-dev bison flex re2c libtool
