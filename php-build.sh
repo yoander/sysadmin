@@ -87,7 +87,7 @@ export PEAR_INSTALLDIR
 EXTRA_LIBS=-lstdc++
 export EXTRA_LIBS
 
-[[ ! -d "$SYSCONFDIR" ]] && { echo -e "You must create config dirs: $SYSCONFDIR, SYSCONFDIR/conf.d!"; echo -e Bye!!!; exit 3; } 
+[[ ! -d "$SYSCONFDIR" ]] && { echo -e "You must create config dirs: $SYSCONFDIR, $SYSCONFDIR/conf.d!"; echo -e Bye!!!; exit 3; } 
 
 [[ ! -d "$EXTENSION_DIR" ]] && { echo -e "You must create extension dir: $EXTENSION_DIR!"; echo -e Bye!!!; exit 4; }
 
