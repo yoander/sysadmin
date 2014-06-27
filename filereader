@@ -1,0 +1,10 @@
+#!/usr/bin/env perl
+open(FILEREAD, "< /home/yoander/projects/cake/.perms");
+my @arr;
+while (<FILEREAD>) {
+	my($line) = $_;
+	chomp($line);
+	push(@arr,$line);
+}
+close FILEREAD;
+exit join(' ',@arr); 

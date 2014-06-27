@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+SRCROOT='/mnt/backup/vhosts/'
+SRC=''
+DESTROOT='/var/www/vhosts/'
+DEST=''
+BKUPDATE='now'
+USAGE='Usage:  getbackup target [-date]
+target: A file or directory
+-date:  Date when the backup was made
+        Valid Formats
+        -------------
+
+        1. The string "now" (refers to the current time)
+
+        2. An interval, which is a number followed by one of the characters s, m, h, D, W, M, or Y (indicating seconds, minutes, hours,
+           days,  weeks,  months,  or  years respectively), or a series of such pairs.  In this case the string refers to the time that
+           preceded the current time by the length of the interval.  For instance, "1h78m" indicates the time that was one hour and  78
+           minutes  ago.   The  calendar  here  is  unsophisticated: a month is always 30 days, a year is always 365 days, and a day is
+           always 86400 seconds.
+
+        5. A date format of the form YYYY/MM/DD, YYYY-MM-DD, MM/DD/YYYY, or MM-DD-YYYY, which indicates midnight on the  day  in  ques-
+           tion,  relative  to  the  current timezone settings.  For instance, "2002/3/5", "03-05-2002", and "2002-3-05" all mean March
+           5th, 2002.
+
+        Default value is now
+'
+# No arguments
+[[ 0 == $# ]] &&  { echo "$USAGE"; exit 1; }
+
+[[ $1 =~ '^-' ]] && { echo "$USAGE"; exit 2; }
+
+[[ '' != $2 ]] && BKUPDATE=$2
+
+[[ ! $1 =~ '^\/' ]] && { DEST="$DESTROOT$1"; SRC="$SRCROOT$1"; } || { [[ ! $1 =~ '(.*/)/(.*)' ]] && { echo "If restore point was\
+	given in FQN a double slash would be provided as start of the restore point"; exit 3; } }
+
+[[ '' == "$DEST" ]] && DEST="${BASH_REMATCH[1]}${BASH_REMATCH[2]}"
+[[ '' == "$SRC" ]] && SRC="$SRCROOT${BASH_REMATCH[2]}"
+[[ ! -e "$SRC" ]] && { echo "The $SRC doesn't exist in the backup directory"; exit 4; }
+[[ ! -e "$(dirname $DEST)" ]] && mkdir -p "$(dirname $DEST)"
+[[ ! -e "$DEST" ]] && [[ -d "$SRC" ]] && mkdir "$DEST"
+[[ ! -e "$DEST" ]] && [[ -f "$SRC" ]] && touch "$DEST"
+
+[[ 'now' != "$BKUPDATE" ]] && { [[ ! "$BKUPDATE" =~ '^-(now|[[:digit:]]+[smhDWMY]$|[[:digit:]]{4}[/-][[:digit:]]{1,2}[/-][[:digit:]]{1,2}|[[:digit:]]{1,2}[/-][[:digit:]]{1,2}[/-][[:digit:]]{4}|[[:digit:]]*Y?[[:digit:]]*M?[[:digit:]]*D?[[:digit:]]*h?[[:digit:]]*m?[[:digit:]]*s?$)' ]] && { echo "Invalid backup date fomart, type getbackup for help"; exit 4; } || BKUPDATE=${BASH_REMATCH[1]}; }
+
+#/usr/bin/rdiff-backup --force -r $BKUPDATE $SRC $DEST && [[ "$DEST" =~ "/home/$SUDO_USER/" ]] && { chown -R "$SUDO_USER:$SUDO_USER" "$DEST" || { echo Error while changing ownership!!!; exit 5; } }
+echo Done!!!
+exit 0 

@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+function syncing() {
+	local SRC="/var/www/vhosts/smc/$1"
+	local SERVER=
+    local DEST="$SERVER:/var/www/html/$2"
+	rsync -e ssh -azm --no-A --no-o --chmod=ug-s,Dg=rx,Fg=r,o-rwx --filter="- cache/" --filter="- .cache/" \
+        --filter="- test/" --filter="- tests/" --filter="- .project" --filter="- .settings" --filter="- Thumbs.db" \
+        --filter="- .metadata/" --filter="- log/" --filter="- logs/" --filter="- rsync-filter.txt" --filter=": /rsync-filter.txt" "$SRC" "$DEST" 2>/dev/null && \
+	return 0
+	return 1
+}
+
+[[ "$1" == '' ]] && { echo Newsletter name is required; exit 6; }
+[[ "$1" =~ '.*\/.*' ]] && { echo Newsletter name given in path format is not allowed; exit 7; }
+[[ ! -e "/var/www/vhosts/smc/templates/nl_$1_html.tpl.php" ]] && { echo "Invalid newsletter name"; exit 8; }
+
+syncing "config.php" && { echo Uploaded config file; } || { echo "Error uploading images/newsletter/$1"; exit 2; }
+syncing "newsletter/" "newsletter/" && { echo Uploaded newsletter dir; } || { echo "Error uploading newsletter dir"; exit 5; }
+syncing "images/newsletter/$1" "images/newsletter/" && { echo Uploaded images; } || { echo "Error uploading images/newsletter/$1"; exit 2; }
+syncing "images/newsletter/common" "images/newsletter/" && { echo Uploaded common images; } || { echo "Error uploading images/newsletter/common"; exit 2; }
+syncing "lang/newsletter/$1.php" "lang/newsletter/" && { echo Uploaded lang file; } || { echo "Error uploading lang file"; exit 3; }
+syncing "lang/newsletter/common.php" "lang/newsletter/" && { echo Uploaded common lang; } || { echo "Error uploading NL common lang"; exit 3; }
+syncing "templates/nl_$1_html.tpl.php" "templates/" && { echo "Uploaded nl_$1_html.tpl.php file"; } || \
+{ echo "Error uploading  nl_$1_html.tpl.php file"; exit 4; }
+exit 0

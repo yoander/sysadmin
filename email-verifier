@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+while read email; do
+	RESULT=$(curl -sSF "check=$email" verify-email.org | grep -o 'Result:\s*Ok')
+	{ [[ "$RESULT" != '' ]] && echo "$email" >> /home/yoander/good-list.txt; } || echo "$email" >> /home/yoander/bad-list.txt 
+done < $1

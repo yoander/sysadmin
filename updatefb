@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+if [[ "$1" =~ '^(\+|\-)([[:digit:]]+)' ]]
+then
+	if [[ '+' == "${BASH_REMATCH[1]}" ]]
+	then
+		BASEPOINTS=1
+		NEWBASEPOINTS='base_points+5'
+	else
+		BASEPOINTS=6
+		NEWBASEPOINTS='base_points-5'
+	fi 
+else 
+	echo Invalid format
+	exit 1;
+fi
+DB_USR=
+DB_PWD=
+SRV=
+UUID="${BASH_REMATCH[2]}"
+QUERY="UPDATE smc.sn_users SET base_points=$NEWBASEPOINTS WHERE (fb_uid=$UUID) AND (base_points=$BASEPOINTS) AND (is_active=1)"
+echo Updating smc.sn_users in $SRV
+ssh $SRV "/usr/bin/mysql -u $DB_USR -p$DB_PWD -e \"$QUERY\""
+echo Done!

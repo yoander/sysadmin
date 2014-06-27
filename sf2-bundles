@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+#
+# Copyleft Flossblog
+# Licence: GPL
+#
+[[ '' == $1 ]] && echo $BASH_VERSION || echo $1
+#
+#
+# Commands section
+WGET=$(which wget)
+TAR=$(which tar)
+RSYNC="$(which rsync) -avz --no-p --no-o --no-g "
+#
+#
+# Parameter section
+VERSION=$1
+INSTALL_PATH=/usr/share/php
+#
+#
+[[ "" == "$VERSION" ]] && { echo "You must specify Symfony2 version"; exit; }
+[[ "" != "$2" ]] && INSTALL_PATH=$2
+[[ ! -d "$INSTALL_PATH" ]] && { echo "Verify that $INSTALL_PATH exists and you cant write on it or specify an install dir"; exit; }
+
+"$WGET" -c http://symfony.com/download?v=Symfony_Standard_Vendors_$VERSION.tgz -O  /tmp/Symfony_Standard_Vendors_$VERSION.tgz
+"$TAR" xzvf /tmp/Symfony_Standard_Vendors_$VERSION.tgz -C /tmp
+#
+echo Standars Bundles
+rm -rf $INSTALL_PATH/Symfony/Bundle
+$RSYNC /tmp/Symfony/vendor/symfony/src/Symfony/Bundle $INSTALL_PATH/Symfony/
+$RSYNC /tmp/Symfony/vendor/bundles/Symfony/Bundle $INSTALL_PATH/Symfony/
+
+echo Standars Bridge
+rm -rf $INSTALL_PATH/Symfony/Bridge
+$RSYNC /tmp/Symfony/vendor/symfony/src/Symfony/Bridge $INSTALL_PATH/Symfony/
+
+echo JMS/SecurityExtraBundle and Sensio Bundles
+rm -rf $INSTALL_PATH/JMS/SecurityExtraBundle
+rm -rf $INSTALL_PATH/Sensio
+$RSYNC /tmp/Symfony/vendor/bundles/JMS $INSTALL_PATH/
+$RSYNC /tmp/Symfony/vendor/bundles/Sensio $INSTALL_PATH/
+
+echo Monolog
+rm -rf $INSTALL_PATH/Monolog
+$RSYNC /tmp/Symfony/vendor/monolog/src/Monolog $INSTALL_PATH/
+
+echo Assetic
+rm -rf $INSTALL_PATH/Assetic
+$RSYNC /tmp/Symfony/vendor/assetic/src/Assetic $INSTALL_PATH/
+
+# Filesystem component
+# Filesystem is a sf2 component but it is not
+# avalaible under pear install so here is my hack
+echo Filesystem Symfony Component
+rm -rf $INSTALL_PATH/Symfony/Component/Filesystem
+$RSYNC /tmp/Symfony/vendor/symfony/src/Symfony/Component/Filesystem $INSTALL_PATH/Symfony/Component/
+
+echo Metadata
+rm -rf $INSTALL_PATH/Metadata
+$RSYNC /tmp/Symfony/vendor/metadata/src/Metadata $INSTALL_PATH
+
+#Twig text extension
+#sudo rsync -avz --no-p --no-o --no-g \

@@ -1,0 +1,304 @@
+#!/usr/bin/env php
+<?php 
+class Base {
+	
+	private static $error;
+	
+	private function __construct() {;}
+
+	private function __clone() {;}
+
+	public static function getError() {
+		return self::$error;
+	}
+
+	public static function resetError() {
+		self::$error = '';
+	}
+
+	public static function log($msg) {
+		$fd = fopen(self::getLogFilePath(), "ab");
+		fwrite($fd, $msg . "\n");
+		fclose($fd);
+	}
+
+	public static function blankLogFile() {
+		$fd = fopen(self::getLogFilePath(), "wb");
+		fwrite($fd,'');
+		fclose($fd);
+	}
+
+	private final static function getLogFilePath() {
+		return  '/tmp/vresponse.log'; 	
+	}
+}
+
+class VerticalResponse extends Base {
+	const WSDL = 'https://api.verticalresponse.com/wsdl/1.0/VRAPI.wsdl';
+	const USER = '';
+	const PASSWD = '';
+	const SESSION_TIME = 10;
+	private static $conn = null;
+	private static $sid = ''; 
+	private static $error = '';
+	
+	private function __construct() {
+	}
+
+	private function __clone() {
+
+	}
+	
+	public static function login() {
+		try {
+			self::resetError();
+			self::$conn = new SoapClient(self::WSDL);
+			self::$sid = self::$conn->login(array(
+                          				'username' => self::USER,
+                          				'password' => self::PASSWD,
+                          				'session_duration_minutes' => self::SESSION_TIME
+                          			        )
+                    	);
+			self::log('VR Successful login');
+			return true;	
+		} catch (SoapFault $exception) {
+			self::$error = "Login Error: {$exception->faultcode} - {$exception->faultstring}\n";
+			self::log(self::$error);
+		}		
+		return false;
+	}
+
+
+	public static function getListId($name) {
+		try {
+			self::resetError();
+			$ls = self::$conn->enumerateLists(array(
+    							  'session_id' => self::$sid, 
+							  'name' => $name,
+							  'include_field_info' => 1,
+							  'limit' => 1
+							)
+			);
+			self::log("$name Id retrieved");
+			return $ls[0]->id;
+		} catch (SoapFault $exception) {
+			self::$error = "Error getting list id: {$exception->faultcode} - {$exception->faultstring}\n";		
+			self::log(self::$error);
+		}
+		return 0;
+	}
+	
+	public static function getList($lid) {
+		try {	
+			self::resetError();
+			return self::$conn->downloadList(array(
+    					   			'session_id' => self::$sid,
+    					   			'list_id' => $lid,
+    					   			'delimiter' => 'csv',
+    					   			'fields_to_include' => array( 'email_address', 'first_name', 'last_name' ),
+					  		)	 
+			);
+		} catch (SoapFault $exception) {
+			self::$error = "Error getting list: {$exception->faultcode} - {$exception->faultstring}\n";
+			self::log(self::$error);
+		}
+		return null;
+
+	}
+	
+	public static function getListMembers($lid) {
+		try {	
+			self::resetError();
+			$result = self::$conn->getListMembers(array(
+    					   			'session_id' => self::$sid,
+    					   			'list_id' => $lid,
+								'max_records' => 6000
+					  		)	 
+			);
+			self::log('Members list retrieved');
+			return $result;
+		} catch (SoapFault $exception) {
+			self::$error = "Error getting list members: {$exception->faultcode} - {$exception->faultstring}\n";		
+			self::log(self::$error);
+		}
+		return null;
+
+	}
+}
+
+class SMCClients extends Base {
+	const HOST = '';
+	const DB = '';
+	const USER = '';
+	const PASSWD = '';
+	private static $conn;
+	private static $error;
+
+	private function __construct() {;}
+
+	private function __clone() {;}
+
+	private static function isConnectionOpen() {
+		return isset(self::$conn) && !is_null(self::$conn) && (false !== self::$conn);
+	}
+	
+	private static function openConnection() {
+		if (!self::isConnectionOpen()) {
+			self::resetError();
+			self::$conn = mysql_connect(self::HOST, self::USER, self::PASSWD);
+			if (false === self::$conn) { 
+				self::$error = mysql_error(); 
+				self::log(self::$error);
+				return false;
+			}
+			self::log('Mysql connection has been opened successfully');
+		}
+		return true;
+	}
+
+	private static function closeConnection() {
+		if (self::isConnectionOpen()) {
+		        self::resetError();
+			$result = mysql_close(self::$conn);
+			unset(self::$conn);
+			self::log('MySql Connection has been closed successfully');
+			return $result;
+		}
+	}
+
+	private static function executeQuery($query = '') {
+		self::resetError();
+		$query = preg_replace(array("@\s*,\s*@", "@\s*\(\s*@", "@\s*\)\s*@"), array(',', '(', ')'), $query);
+		if (!is_string($query) || empty($query)) {
+			self::$error = "Invalid query: $query";
+			self::log(self::$error);
+			exit(3);
+		}
+		if (!self::openConnection()) {
+			self::log(self::$error);
+			exit(1);
+		}
+		$db = mysql_select_db(self::DB, self::$conn);
+		if (!$db) {
+			self::$error = mysql_error();
+			self::log(self::$error);
+			self::closeConnection(); 
+			exit(2);
+		}
+		self::log("Processing: $query");
+	        $result = mysql_query($query, self::$conn); 
+		if (!$result) {
+			self::$error = mysql_error();
+			self::log(self::$error);
+			return false;
+		}
+		return $result;
+	}
+
+	public static function existsClient($email) {
+		$result = self::executeQuery("select codcliente from Clientes where Clientes.correoe = '$email'");
+		if (!$result || (0 == mysql_num_rows($result)))  {
+			return false;
+		}
+		return true; 
+	}
+
+	public function updateClientStatus($isActive, $email) {
+		$result = self::executeQuery("update Clientes set activo='$isActive' where correoe='$email'");	
+		if ($result) {
+			self::log("Status updated, user: $email " . ($isActive ? 'activated' : 'deactivated'));	
+		}
+		return $result;
+	}
+	
+	public static function insertClient($client, $list, $isActive = true) {
+		$result = self::executeQuery("insert into Clientes(
+							titulo, 
+							nomcliente, 
+							apecliente, 
+							ciudad, 
+							zip,
+							correoe, 
+							empresa, 
+							telefono,
+							codidio, 
+							codpais, 
+							activo, 
+							lista)
+						 values(
+							'{$client->title}',
+							'{$client->first_name}',
+							'{$client->last_name}',
+							'{$client->city}',
+							'{$client->postalcode}',
+							'{$client->email_address}',
+							'{$client->company_name}',
+ 							'{$client->home_phone}',
+ 							'{$client->codidio}',
+							'{$client->codpais}',
+							'$isActive',
+                                                        '{$client->list}'
+							)"
+				  );
+		if ($result) {
+			self::log("User: {$client->email_address} was added");
+		}
+		return $result;
+	}
+	
+	
+	public static function processClient($client) {
+		$isActive = (!isset($client->optin_status) ||  !empty($client->option_status) || ($client->optin_status != -1));
+		if (self::existsClient($client->email_address)) {
+			return self::updateClientStatus($isActive, $client->email_address);
+		}
+		return self::insertClient($client, $isActive);
+	} 
+
+}
+
+$listNames = array(
+	'AFFILIATES-FR', 'AFFILIATES-DE', 'AFFILIATES-EN', 'AFFILIATES-ES',
+	'LIST-FR', 'LIST-DE', 'LIST-EN', 'LIST-ES',
+	'Contest - FR', 'Contest - DE', 'Contest - EN', 'Contest - ES',
+	'PHPLive - FR', 'PHPLive - DE', 'PHPLive - EN', 'PHPLive - ES'
+);
+#$listNames = array('Contest - ES');
+$fields = array(
+	'title', 
+	'first_name', 
+	'last_name', 
+	'address_1', 
+	'address_2', 
+	'city', 
+	'postalcode',
+	'email_address',
+	'company_name',
+	'home_phone',
+	'codidio',
+	'codpais',
+	'optin_status'
+);
+Base::blankLogFile();
+Base::log(date("l jS \of F Y h:i:s A"));
+$lists = array();
+if (!VerticalResponse::login()) { exit(4); }
+foreach ($listNames as $name) {
+	$id = VerticalResponse::getListId("$name");
+	if (!$id) { continue; }
+	$members = VerticalResponse::getListMembers($id);
+	if (!$members) { continue; }
+	$lists[$name] = $members;
+}
+foreach ($lists as $name => $members) {
+	foreach ($members as $member) {
+		$client = new stdClass();
+		foreach ($member->member_data as $data) {
+			if (!in_array($data->name, $fields)) { 	continue; }
+			$client->{$data->name} = $data->value;
+		}
+		$client->list = $name;
+		SMCClients::processClient($client);
+	}
+}
+?>

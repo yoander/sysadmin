@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+REPORT='/tmp/vhosts-backup-report.txt'
+FIND="$(which find)"
+XARGS="$(which xargs)"
+RDIFFBACKUP="$(which rdiff-backup)"
+EXCLUDELIST="/usr/local/etc/rdiff.backup.exclude.list.txt"
+OPTS="--exclude-globbing-filelist $EXCLUDELIST --print-statistics"
+SOURCE='/var/www/vhosts'
+WIKISRC='/var/www/pmwiki'
+BACKUPROOT='/mnt/backup/vhosts'
+PATTERN=".*/((.*([0-9]|old|ba?c?ku?ps?))|(\..*)|(copy|new|backup|back|)[-_\.].*|admin_com|cgisubscribe|domaintracker|drupal|joomla|nettrack|secure|vtigercrm|webgrind|wiki|chat|aadmins|admins|livechat|livestats|vhosts)$"
+EMAIL=
+#echo -e "Starting vhosts backup proccess  at: $(date '+%A, %B %e %R')" > $REPORT
+#$FIND $SOURCE -maxdepth 1 -type d ! -name '.*' ! -name 'vhosts' ! -iname '*old*' ! -iname '*copy*'  ! -empty -print0 | sort -z | while read -d $'\0' file; do
+$FIND $SOURCE -maxdepth 1 -regextype posix-egrep ! -iregex  $PATTERN  ! -empty -type d -print0 | sort -z | while read -d $'\0' file
+do
+	DNAME=$(basename "$file")
+	echo -e "$DNAME"
+	echo -e "$DNAME" >> $REPORT
+	$RDIFFBACKUP $OPTS  "$SOURCE/$DNAME" "$BACKUPROOT/$DNAME" >> $REPORT
+done
+$RDIFFBACKUP $OPTS  "$WIKISRC" "$BACKUPROOT/pmwiki" >> $REPORT
+echo  "Finished !!!" >> $REPORT
+mail -s 'vhosts Backup Report' $EMAIL < $REPORT
+# Blank REPORT file
+> $REPORT
+exit 0

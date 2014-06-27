@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+HOSTNAME=$(hostname)
+CURRENTDIR=$(pwd)
+BASENAME=$(basename $CURRENTDIR)
+GITDIR=/mnt/projects
+GITPRJ=/mnt/projects/$BASENAME
+PARENTDIR=$(dirname $CURRENTDIR)
+VOLATILEDIR=/mnt/volatile
+WEBDIR=/var/www/vhosts
+VOLATILEPRJ=$VOLATILEDIR/$BASENAME
+RSYNCCMD=/usr/bin/rsync
+COMMIT='HEAD'
+[[ '' != $1 ]] && COMMIT=$1
+[[ $WEBDIR != $PARENTDIR ]] && { echo "$CURRENTDIR is an invalid web project!"; exit 2; }
+[[ ! -d $GITDIR/$BASENAME ]] && { echo $BASENAME is not under git control; exit 3; }
+OLDUMASK=$(umask)
+#umask 0002
+[[ ! -d $VOLATILEPRJ ]] && mkdir $VOLATILEPRJ
+cd $GITPRJ && rm -rf *
+git archive --format=tar $COMMIT | (cd $VOLATILEPRJ && tar mxf -)
+#umask $OLDUMASK
+#SYNC
+$RSYNCCMD -avzmh --no-A --no-o --no-g --no-t --no-p --delete-after --filter='- Thumbs.db' --filter='- filter.txt' --filter=': /filter.txt' --filter='- .*' $VOLATILEPRJ $WEBDIR/
+chown -Rc :apache $WEBDIR/$BASENAME

@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+#
+# Copyleft Flossblog
+# Licence: GPL
+#
+if [[ "$1" == "update" ]]
+then
+    pear upgrade -c symfony2
+    pear upgrade -c doctrine
+    pear upgrade -c twig
+    pear upgrade -c swift
+    #pear upgrade -c guzzle
+    #pear upgrade -c Imagine
+    exit
+fi
+
+#Symfony 2
+pear channel-discover pear.symfony.com
+COMPONENTS="BrowserKit ClassLoader Config Console CssSelector DependencyInjection DoctrineBridge DomCrawler Finder Form Locale MonologBridge Process Routing Security Serializer Templating Translation TwigBridge Validator Yaml"
+for component in $COMPONENTS
+do
+    pear install symfony2/$component
+done
+
+# Doctrine ORM
+pear channel-discover pear.doctrine-project.org
+pear install doctrine/DoctrineORM
+
+#Twig
+pear channel-discover pear.twig-project.org
+pear install twig/Twig
+
+#Swift mailer
+pear channel-discover pear.swiftmailer.org
+pear install swift/swift
+
+#Guzzle Restful client
+pear channel-discover guzzlephp.org/pear
+pear install guzzle/guzzle

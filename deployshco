@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+USERS=''
+for USER in $USERS; do
+	cp -vf /home/yoander/.bashrc_common /home/$USER/ && chown -c $USER:$USER /home/$USER/.bashrc_common
+done;

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+ADS_UPLOADER='yoander '
+[[ ! "$ADS_UPLOADER" =~ "$SUDO_USER" ]] && echo "You don't have perms to upload $DB database" && exit 0
+/usr/local/bin/dbdownload openx 

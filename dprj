@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+[[ '' == "$1" ]] && { echo Provide a project argument!; exit 1; }
+echo -e "$PROJECTS_PATH/$1"
+[[ ! -e "$PROJECTS_PATH/$1" ]] && { echo Invalid project name; exit 2; }
+echo "Deploying $1:"
+echo 
+echo Syncing:
+rsync -avzm --no-A --no-o --no-g --chmod=ug-s,Du=rwx,Fu=rw,Dg=rx,Fg=r,o-rwx --delete-after --filter="protect cache/"  --filter="protect log/" --filter="protect web/images/hotels/" --filter="protect web/images/hotels/*" --filter="protect web/images/excursions/" --filter="protect web/images/excursions/*" --filter="protect web/images/cars/" --filter="protect web/images/cars/*" --filter="+ .htaccess" --filter="- .*" --filter="- Thumbs.db" --filter="- nbproject" -F -F "$PROJECTS_PATH/$1" "$DEPLOY_PATH/" &&\
+echo
+echo Fixing owner:
+chown -cR :"$APACHE_GROUP" "$DEPLOY_PATH/$1" &&\
+if [ -e  "$PROJECTS_PATH/$1/.perms" ]
+then
+	echo
+	echo Fixing perms:
+	PATTERN='[ugoa][=+-](rwx|rxw|wxr|wrx|xrw|xwr|rw|wr|wx|xw|rx|xr|r|w|x)' 
+	while read file_perms; do
+		#echo $file_perms
+		[[ "$file_perms" =~ ^(.*):([R]?):(($PATTERN)(,($PATTERN))?(,($PATTERN))?)$ ]] && \
+			{ FILE="$DEPLOY_PATH/$1/${BASH_REMATCH[1]}"; OPTS=${BASH_REMATCH[2]}; PERMS=${BASH_REMATCH[3]};  } || \
+			{ echo Invalid format founded in  "$PROJECTS_PATH/$1/.perms"; exit 3; }
+		[[ ! -e "$FILE" ]] && { echo "File not found: $FILE"; exit 4; } 
+		FPERMS=$(echo "$PERMS" | sed 's/x//g' | sed 's/,[ugoa][=+-],/,/g' | sed 's/,[ugoa][=+-]$//')
+		#echo "file:$FILE	opt:$OPTS	perm:$PERMS"
+		if [ -f "$FILE" ]; then
+			chmod -c $FPERMS $FILE
+		elif [ -d "$FILE" ]; then
+			 if [[ '' == $OPTS ]]; then
+				#echo
+				bash -c "chmod -c $PERMS $FILE"
+				bash -c "chmod -c o=-rwx $FILE"
+			 else 
+				#echo
+				find "$FILE" -type d -print0 | xargs -0 chmod -c $PERMS 
+				find "$FILE" -type f -print0 | xargs -0 chmod -c $FPERMS
+				bash -c "chmod -Rc o=-rwx $FILE"
+			 fi
+		fi
+	done < "$PROJECTS_PATH/$1/.perms"
+fi

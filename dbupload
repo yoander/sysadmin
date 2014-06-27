@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+SMC_UPLOADER='yoander'
+FEEDBACK_UPLOADER='yoander'
+SMCDIR_UPLOADER='yoander'
+DB=
+TABLES=$1
+TTABLE='Traducciones'
+TUPLOADER=
+DB_USR=
+DB_PWD=
+
+[[ 0 == $# ]] && { echo You must provide a table name; exit 1; }
+
+[[ '' != $2 ]] && { DB=$1; TABLES=$2; }
+
+[[ ! "$SMC_UPLOADER" =~ "$SUDO_USER" ]] &&  [[ "smc" == "$DB" ]]  && echo "You don't have perms to upload $DB database" && exit 2
+
+[[ "$TUPLOADER" =~ "$SUDO_USER" ]] && [[ "smc" == "$DB" ]] && [[ $TTABLE != $TABLES ]]  && echo "You don't have perms to upload $TABLES tables" && exit 3
+
+[[ ! "$FEEDBACK_UPLOADER" =~ "$SUDO_USER" ]] &&  [[ "feedback" == "$DB" ]]  && echo "You don't have perms to upload $DB database" && exit 4
+
+[[ ! "$SMCDIR_UPLOADER" =~ "$SUDO_USER" ]] &&  [[ "phpld" == "$DB" ]]  && echo "You don't have perms to upload $DB database" && exit 5
+
+if [ 'all' == "$TABLES" ]; then
+     TABLES=
+     _TABLES='_all'
+elif [ "$TTABLE" == "$TABLES" ]; then
+    _TABLES='Traducciones'
+else  
+    _TABLES=$(echo "$TABLES" | sed 's/\s/-/g')
+fi
+FILE="/tmp/$DB$_TABLES.sql"
+SERVER=
+echo "-----------------------------------------------"
+echo -e "Making DB Update \n"
+echo -e "DB: $DB, Table(s): $1 \n"
+
+
+echo -e "Dumping to $FILE \n"
+/usr/bin/mysqldump -u $DB_USR -p$DB_PWD -h localhost --add-drop-table --extended-insert $DB $TABLES > $FILE
+echo -e "Transfering data to $SERVER \n"
+rsync -e ssh -az $FILE $SERVER:$FILE 
+echo -e "Updating $DB in $SERVER \n"
+
+ssh $SERVER "/usr/bin/mysql -u $DB_USR -p$DB_PWD $DB < $FILE"
+
+ssh $SERVER "/usr/local/bin/dbupload $DB $FILE"
+
+echo "-----------------------------------------------"
+echo "Removing temporal files..."
+rm -f $FILE.sql
+
+echo "Done... !"

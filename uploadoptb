@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+SMC_UPLOADER='yoander'
+DB=
+DB_USR=
+DB_PWD=
+TABLES='tpaginas Keywords rel_pag_key rel_tpag_seg rel_tpag_hot rel_key_seg rel_key_hot rel_tpag_pol rel_tpag_marc rel_tpag_wpol rel_tpag_guia rel_tpag_cguide'
+# Replace space with -
+_TABLES=`echo "$TABLES" | sed 's/\s/-/g'`
+FILE="/tmp/$DB$_TABLES.sql"
+SERVER=
+TTABLE='Traducciones'
+TFILE="/tmp/$DB$TTABLE.sql"
+
+[[ ! "$SMC_UPLOADER" =~ "$SUDO_USER" ]] &&  [[ "smc" == "$DB" ]]  && echo "You don't have perms to upload $DB database" && exit 0
+
+echo "-----------------------------------------------"
+echo -e "Making DB Update \n"
+echo -e "DB: $DB, Table(s): $TABLES \n"
+
+echo -e "Dumping to $FILE \n"
+/usr/bin/mysqldump -u $DB_USR -p $DB_PWD -h localhost --add-drop-table --extended-insert $DB $TABLES > $FILE
+/usr/bin/mysqldump -u $DB_USR -p $DB_PWD -h localhost --add-drop-table --extended-insert $DB $TTABLE > $TFILE
+
+echo -e "Transfering data to $SERVER \n"
+rsync -e ssh -az $FILE $SERVER:$FILE
+rsync -e ssh -az $TFILE $SERVER:$TFILE
+
+echo -e "Updating $DB in $SERVER \n"
+ssh $SERVER "/usr/bin/mysql -u $DB_USR -p $DB_PWD $DB < $FILE"
+ssh $SERVER "/usr/bin/mysql -u $DB_USR -p $DB_PWD $DB < $TFILE"
+
+ssh $SERVER "/usr/local/bin/dbupload $DB $FILE"
+ssh $SERVER "/usr/local/bin/dbupload $DB $TFILE"
+
+echo "-----------------------------------------------"
+echo "Removing temporal files..."
+rm -f $FILE.sql
+rm -f $TFILE.sql
+
+echo "Done... !"

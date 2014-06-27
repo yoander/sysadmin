@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+[[ '' != $2 ]] && TABLES=`echo "$2" | sed 's/\s/-/g'` || TABLES='all'
+FILE="/tmp/$TABLES$1.sql"
+SRC=
+DEST=
+DB_USR=
+DB_PWD=
+[[ '' != $3 ]] && { SERVER="SERVER_NAME" ; }
+echo "-----------------------------------------------"
+echo -e "Making DB Download \n"
+echo -e "DB: $1, Table(s): $TABLES \n"
+echo -e "Conecting to $SRC"
+ssh $SRC "/usr/bin/mysqldump -u $DB_USR -p$DB_PWD --add-drop-table --extended-insert $1 $2 > $FILE"
+echo -e "Transfering data to  \n"
+rsync -e ssh -az $SRC:$FILE  $FILE 
+echo -e "Backing up $1 $2 to /tmp/$1$TABLES.sql \n"
+/usr/bin/mysqldump -u $DB_USR -p$DB_PWD -h $DEST --add-drop-table --extended-insert $1 $2 > /tmp/$1$TABLES.sql
+echo -e "Updating $1 $2\n"
+/usr/bin/mysql -u $DB_USR -p$DB_PWD -h $DEST $1 < $FILE
+echo "Removing temporal FILEs..."
+ssh $SERVER "rm -f $FILE.sql"
+echo "Done !"

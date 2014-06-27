@@ -1,0 +1,57 @@
+#!/usr/bin/env php
+<?php
+	
+function build_command($arguments = array(), $options = array())
+{
+	#$env = $arguments['server'];
+
+	$ini = sfConfig::get('sf_config_dir').'/properties.ini';
+	if (!file_exists($ini))	{
+		die('You must create a [config/]properties.ini file');
+	}
+
+	$properties = parse_ini_file($ini, true);
+
+	if (!isset($properties['host'])) {
+		die('You must define a "host" entry.');
+	}
+
+	if (!isset($properties['dir'])) {
+		die('You must define a "dir" entry.');
+	}
+
+	$host = $properties['host'];
+	$dir  = $properties['dir'];
+	$user = isset($properties['user']) ? $properties['user'].'@' : '';
+
+	$is_first = (bool) $properties['first_time'];
+	
+	if (!$is_first && substr($dir, -1) != '/') {
+		$dir .= '/';
+	}
+
+	$ssh = 'ssh';
+
+	if (isset($properties['port']))	{
+		$port = $properties['port'];
+		$ssh = '"ssh -p'.$port.'"';
+	}
+
+	if (isset($properties['parameters'])) {
+		$parameters = $properties['parameters'];
+	}
+	
+
+	#$dryRun = $options['go'] ? '' : '--dry-run';
+	$command = "rsync $dryRun $parameters -e $ssh ./ $user$host:$dir";
+
+	#$this->getFilesystem()->execute($command, $options['trace'] ? array($this, 'logOutput') : null, array($this, 'logErrors'));
+
+	#$this->clearBuffers();
+	return $command;
+}
+
+function execute_command() {
+}
+
+?>

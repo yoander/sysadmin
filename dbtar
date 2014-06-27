@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+[[ '' ==  $1 ]] && { echo You must provide a db name; exit 1; }
+[[ ! -e /var/lib/mysql/$1 ]] && { echo "db: $1 does not exist"; exit 2; }
+tar cjvf $1.tar.bz2 /var/lib/mysql/$1

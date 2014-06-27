@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+ADS_UPLOADER='yoander'
+DB='openx'
+TABLES='all'
+# Replace space with -
+_TABLES=`echo "$TABLES" | sed 's/\s/-/g'`
+FILE="/tmp/$DB$_TABLES.sql"
+SERVER=
+
+[[ ! "$ADS_UPLOADER" =~ "$SUDO_USER" ]] && echo "You don't have perms to upload $DB database" && exit 0
+/usr/local/bin/dbupload $DB $TABLES
+exit 0

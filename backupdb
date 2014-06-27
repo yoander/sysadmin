@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+# GNU shell script para realizar copias de seguridad a bases de
+# datos MySQL
+# ---------------------------------------------------------------
+# Copyright (c) 2009 flossblog <http://flossblog.wordpress.com/>
+# Este script es liberado bajos los téminos de la GNU GPL
+# version 2.0 o superior
+# --------------------------------------------------------------
+# Uso:
+# El script recupera todas las base de datos del servidor MySQL
+# especificado en HOST y crea una copia de seguridad para cada
+# una de ellas almacenándolas en el directorio especificado en
+# BACKDIR. Modifique cada variable según sus necesidades. Puede
+# ejecutar el script de forma manual o como tarea programada
+# -------------------------------------------------------------
+# Última actualización: 31 de mayo del 2010
+# ------------------------------------------------------------- 
+# 
+# Servidor MySQL
+#
+HOST='localhost'
+#
+# Usuario MySQL
+#
+USER=''
+#
+# Contraseña
+#
+PASSWD=''
+#
+# Directorio hacia donde se van a guardar las copias de seguridad
+#
+BACKDIR='/srv/elbatey-backup/db'
+# 
+# Log file
+#
+LOG=/srv/elbatey-backup/db/backupdb.log
+#
+#
+# Excluye las bases de datos que contengan las palabras:
+# backup, bkup, bakup, bckup, bck, salva, copy, prueba
+# y las que terminan en old.
+#
+# Modifique esta opción según sus necesidades
+#
+EXCLUDE_PATTERN='phplive|test|b(ac)?kup|salva|bck|^old|old$|copy|prueba|wiki|smc[_-].*$'
+#
+#
+echo "Starting production Dbs backup procces at : $(date  +%A,' '%B' '%d' '%Y)" > $LOG
+#
+# Recupera las bases de datos
+#
+DBS=$(mysql -u $USER -h $HOST -p$PASSWD -Bse 'show databases' | egrep -v $EXCLUDE_PATTERN)
+#
+# Crea las copias de seguridad para cada base de datos
+#
+for db in $DBS; do
+    FILE="$BACKDIR/$db.sql.gz"
+    mysqldump --opt --skip-lock-tables -u $USER -p$PASSWD "$db" 2>> $LOG | gzip -9 > "$FILE" && echo "$db -- backed up" >> $LOG
+done
+mail -s 'Development DBs Backup Process' root < $LOG
+
+# Go to BACKDIR
+#cd $BACKDIR
+#git ci -am "Add DBs Backup:" $(date '+%Y-%m-%d')
+#git push origin backup

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Current Apache proccess
+APS=$(pgrep httpd | wc -l)
+# Top Apache proccess
+TOPS=200
+(( $TOPS < $APS )) && echo "Apache proccess: $APS ( $(date +'%Y-%m-%d %T') )" | mail -s 'Warning a lot of Apache proccess is taking place!' yoander.valdes@solmeliacuba.com
