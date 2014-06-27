@@ -1,0 +1,94 @@
+# Users Groups
+User_Alias SYS_ADMIN = yoander
+User_Alias POWER_USER = 
+User_Alias WEB_ADMIN = 
+User_Alias WEB_POWER_USER = 
+
+User_Alias WEB_STD_USER = 
+
+User_Alias OPT_UPDATER_USER = 
+
+User_Alias DEVELOPER = developer1, developer2, developer3
+User_Alias NEW_TECH_TESTER =  
+User_Alias BACKUP_USER = yoander
+User_Alias SMC_RESTRICTED_USER =   
+
+# User Commands
+
+Cmnd_Alias OPT_UPDATER_CMD = /usr/local/bin/uploadoptb, /usr/local/bin/uploadads, /usr/local/bin/dbupload, /usr/local/bin/downloadads
+
+Cmnd_Alias DEVELOPER_CMD = /usr/bin/symfony, /usr/lib/php/modules/, /usr/local/bin/uploadnl, /usr/local/bin/dbtar, /usr/local/bin/sf-cc, /usr/local/bin/get, /usr/local/bin/deploy
+Cmnd_Alias DB_ADMIN_CMD = /usr/local/bin/dbupload, /usr/local/bin/dbdownload, /usr/local/bin/updatefb
+Cmnd_Alias WEB_POWER_USER_CMD = /usr/local/bin/smc-cc, /usr/local/bin/synchi, /usr/local/bin/synchvi, /usr/local/bin/syncft, /usr/local/bin/dlidisoxml
+Cmnd_Alias SSH = /usr/bin/ssh
+
+Cmnd_Alias SYNC_WEB = /usr/bin/rsync -e ssh -avzm --no-A --no-o --chmod\=ug-s\,Dg\=rx\,Fg\=r\,o-rwx --filter\=- cache/ --filter\=- .cache/ --filter\=- test/ --filter\=- tests/ --filter\=- .project --filter\=- .settings --filter\=- Thumbs.db --filter\=- .metadata/ --filter\=- log/ --filter\=- logs/ --filter\=- rsync-filter.txt --filter\=\: /rsync-filter.txt /var/www/*
+
+Cmnd_Alias SYNC_SMC = /usr/bin/rsync -e ssh -avzm --no-A --no-o --chmod\=ug-s\,Dg\=rx\,Fg\=r\,o-rwx --filter\=- cache/ --filter\=- .cache/ --filter\=- test/ --filter\=- tests/ --filter\=- .project --filter\=- .settings --filter\=- Thumbs.db --filter\=- .metadata/ --filter\=- log/ --filter\=- logs/ --filter\=- rsync-filter.txt --filter\=\: /rsync-filter.txt /var/www/vhosts/smc*
+
+#Cmnd_Alias SYNC_SMCDIR = /usr/bin/rsync -e ssh -avzm --no-A --no-o --chmod\=ug-s\,Dg\=rx\,Fg\=r\,o-rwx --filter\=- cache/ --filter\=- .cache/ --filter\=- test/ --filter\=- tests/ --filter\=- .project --filter\=- .settings --filter\=- Thumbs.db --filter\=- .metadata/ --filter\=- log/ --filter\=- logs/ --filter\=- rsync-filter.txt --filter\=\: /rsync-filter.txt /var/www/vhosts/smcdir/*
+
+#Cmnd_Alias SYNC_SMCTA = /usr/bin/rsync -e ssh -avzm --no-A --no-o --chmod\=ug-s\,Dg\=rx\,Fg\=r\,o-rwx --filter\=- cache/ --filter\=- .cache/ --filter\=- test/ --filter\=- tests/ --filter\=- .project --filter\=- .settings --filter\=- Thumbs.db --filter\=- .metadata/ --filter\=- log/ --filter\=- logs/ --filter\=- rsync-filter.txt --filter\=\: /rsync-filter.txt /var/www/vhosts/smcta/*
+
+
+# Newsletter
+#
+Cmnd_Alias SYNC_NL_CONFIG = /usr/bin/rsync -e ssh -avzm --no-A --no-o --chmod\=ug-s\,Dg\=rx\,Fg\=r\,o-rwx --filter\=- cache/ --filter\=- .cache/ --filter\=- test/ --filter\=- tests/ --filter\=- .project --filter\=- .settings --filter\=- Thumbs.db --filter\=- .metadata/ --filter\=- log/ --filter\=- logs/ --filter\=- rsync-filter.txt --filter\=\: /rsync-filter.txt /var/www/vhosts/smc/config.php
+
+Cmnd_Alias SYNC_NL_TPL = /usr/bin/rsync -e ssh -avzm --no-A --no-o --chmod\=ug-s\,Dg\=rx\,Fg\=r\,o-rwx --filter\=- cache/ --filter\=- .cache/ --filter\=- test/ --filter\=- tests/ --filter\=- .project --filter\=- .settings --filter\=- Thumbs.db --filter\=- .metadata/ --filter\=- log/ --filter\=- logs/ --filter\=- rsync-filter.txt --filter\=\: /rsync-filter.txt /var/www/vhosts/templates/nl_*
+
+Cmnd_Alias SYNC_NL_IMGS = /usr/bin/rsync -e ssh -avzm --no-A --no-o --chmod\=ug-s\,Dg\=rx\,Fg\=r\,o-rwx --filter\=- cache/ --filter\=- .cache/ --filter\=- test/ --filter\=- tests/ --filter\=- .project --filter\=- .settings --filter\=- Thumbs.db --filter\=- .metadata/ --filter\=- log/ --filter\=- logs/ --filter\=- rsync-filter.txt --filter\=\: /rsync-filter.txt /var/www/vhosts/smc/images/newsletter/*
+
+Cmnd_Alias SYNC_NL_LANG = /usr/bin/rsync -e ssh -avzm --no-A --no-o --chmod\=ug-s\,Dg\=rx\,Fg\=r\,o-rwx --filter\=- cache/ --filter\=- .cache/ --filter\=- test/ --filter\=- tests/ --filter\=- .project --filter\=- .settings --filter\=- Thumbs.db --filter\=- .metadata/ --filter\=- log/ --filter\=- logs/ --filter\=- rsync-filter.txt --filter\=\: /rsync-filter.txt /var/www/vhosts/smc/lang/newsletter/*
+
+Cmnd_Alias SYNC_NL = SYNC_NL_CONFIG, SYNC_NL_TPL, SYNC_NL_IMGS, SYNC_NL_LANG
+
+
+
+#
+# End of Newsletter
+
+
+Cmnd_Alias SYNC_WEDDCC = /usr/bin/rsync -e ssh -avzm --no-A --no-o --chmod\=ug-s\,Dg\=rx\,Fg\=r\,o-rwx --filter\=- cache/ --filter\=- .cache/ --filter\=- test/ --filter\=- tests/ --filter\=- .project --filter\=- .settings --filter\=- Thumbs.db --filter\=- .metadata/ --filter\=- log/ --filter\=- logs/ --filter\=- rsync-filter.txt --filter\=\: /rsync-filter.txt /var/www/vhosts/wedcc/*
+
+Cmnd_Alias SYNC_PARDISUSCUBA = /usr/bin/rsync -e ssh -avzm --no-A --no-o --chmod\=ug-s\,Dg\=rx\,Fg\=r\,o-rwx --filter\=- cache/ --filter\=- .cache/ --filter\=- test/ --filter\=- tests/ --filter\=- .project --filter\=- .settings --filter\=- Thumbs.db --filter\=- .metadata/ --filter\=- log/ --filter\=- logs/ --filter\=- rsync-filter.txt --filter\=\: /rsync-filter.txt /var/www/vhosts/paradisuscuba/*
+
+Cmnd_Alias SYNC_FEEDBACK = /usr/bin/rsync -e ssh -avzm --no-A --no-o --chmod\=ug-s\,Dg\=rx\,Fg\=r\,o-rwx --filter\=- cache/ --filter\=- .cache/ --filter\=- test/ --filter\=- tests/ --filter\=- .project --filter\=- .settings --filter\=- Thumbs.db --filter\=- .metadata/ --filter\=- log/ --filter\=- logs/ --filter\=- rsync-filter.txt --filter\=\: /rsync-filter.txt /var/www/vhosts/feedback/*
+
+#[A-z]-?[0-9]?([A-z]-?[0-9]?)+/
+#,!SYNC_SMC,!SYNC_WEDDCC,!SYNC_FEEDBACK
+
+Cmnd_Alias SYNC_TP = /usr/bin/rsync -e ssh -avzm --no-A --no-o --chmod\=ug-s\,Dg\=rx\,Fg\=r\,o-rwx --filter\=- cache/ --filter\=- .cache/ --filter\=- test/ --filter\=- tests/ --filter\=- .project --filter\=- .settings --filter\=- Thumbs.db --filter\=- .metadata/ --filter\=- log/ --filter\=- logs/ --filter\=- rsync-filter.txt --filter\=\: /rsync-filter.txt /var/www/vhosts/smc/travel-professionals/*
+
+
+Cmnd_Alias NEW_TECH_TESTER_CMD = DEVELOPER_CMD,/usr/bin/pear,/usr/share/pear/ 
+
+Cmnd_Alias BACKUP_CMD = /usr/bin/rdiff-backup,/usr/local/bin/getbackup
+
+Cmnd_Alias POWER_USER_CMD = /bin/su
+#
+# Disable "ssh hostname sudo <cmd>", because it will show the password in clear. 
+#         You have to run "ssh -t hostname sudo <cmd>".
+#
+Defaults    requiretty
+
+Defaults    env_reset
+Defaults    env_keep = "EDITOR COLORS DISPLAY HOSTNAME HISTSIZE INPUTRC KDEDIR \
+                        LS_COLORS MAIL PS1 PS2 QTDIR USERNAME \
+                        LANG LC_ADDRESS LC_CTYPE LC_COLLATE LC_IDENTIFICATION \
+                        LC_MEASUREMENT LC_MESSAGES LC_MONETARY LC_NAME LC_NUMERIC \
+                        LC_PAPER LC_TELEPHONE LC_TIME LC_ALL LANGUAGE LINGUAS \
+                        _XKB_CHARSET XAUTHORITY"
+# Permisos por Comandos
+
+WEB_ADMIN	ALL = (root) NOPASSWD: DEVELOPER_CMD,DB_ADMIN_CMD,SSH,SYNC_WEB
+WEB_POWER_USER  ALL = (root) NOPASSWD: SYNC_SMC,SYNC_WEDDCC,SYNC_FEEDBACK,WEB_POWER_USER_CMD,SYNC_PARDISUSCUBA
+DEVELOPER	ALL = (root) NOPASSWD: DEVELOPER_CMD
+WEB_STD_USER	ALL = (root) NOPASSWD: SYNC_WEB,!SYNC_SMC,!SYNC_WEDDCC,!SYNC_FEEDBACK,!SYNC_PARDISUSCUBA
+NEW_TECH_TESTER ALL = (root) NOPASSWD: NEW_TECH_TESTER_CMD
+root	ALL = (ALL) ALL
+POWER_USER ALL = POWER_USER_CMD
+BACKUP_USER	ALL = (root) NOPASSWD: BACKUP_CMD
+SYS_ADMIN	ALL = (ALL) ALL, (root) NOPASSWD: BACKUP_CMD, DEVELOPER_CMD, SYNC_WEB, DB_ADMIN_CMD,WEB_POWER_USER_CMD
+SMC_RESTRICTED_USER ALL = (root) NOPASSWD: SYNC_NL,SYNC_TP
+OPT_UPDATER_USER ALL = (root) NOPASSWD: OPT_UPDATER_CMD
