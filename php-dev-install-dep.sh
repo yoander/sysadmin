@@ -1,6 +1,4 @@
 #/usr/bin/env bash
-clear
-
 PKG_MNGR=$(which yum || which apt-get) 
 
 [[ '' == $PKG_MNGR ]] && {

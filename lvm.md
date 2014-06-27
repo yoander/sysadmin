@@ -46,7 +46,7 @@
 # lvdisplay
 ```
 
-### Formatera volumen lógico
+### Formatear volumen lógico
 ```
 # mkfs.ext3 -m 0 /dev/nombre-grupo/nom-volumen-log   [-L label]
 ```
@@ -64,5 +64,3 @@ Agregar al /etc/fstab
 ```
 LABEL=label                             /mnt/some-dir              ext3    defaults,acl    1 2 (ACL es opcional)
 ```
-
-
