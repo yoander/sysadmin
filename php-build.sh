@@ -1,5 +1,20 @@
 #!/usr/bin/env bash
-
+# GNU shell script to compile PHP 
+# ---------------------------------------------------------------
+# Copyleft 2014 Yoander Valdés Rodríguez <http://www.librebyte.net/>
+# Este script es liberado bajos los téminos de la GNU GPL
+# version 2.0 o superior
+# --------------------------------------------------------------
+# Uso:
+# El script recupera todas las base de datos del servidor MySQL
+# especificado en HOST y crea una copia de seguridad para cada
+# una de ellas almacenándolas en el directorio especificado en
+# BACKDIR. Modifique cada variable según sus necesidades. Puede
+# ejecutar el script de forma manual o como tarea programada
+# -------------------------------------------------------------
+# Última actualización: 31 de mayo del 2010
+# ------------------------------------------------------------- 
+#
 DIR="$(cd "$(dirname "$0" )" && pwd )"
 WEB_USR=www-data
 WEB_GROUP=www-data
