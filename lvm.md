@@ -23,7 +23,6 @@
 ```
 # pvcreate <device|partition>
 ``` 
-
 ### Reporte
 ```
 # pvs
