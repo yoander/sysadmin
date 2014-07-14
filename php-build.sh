@@ -2,18 +2,14 @@
 # GNU shell script to compile PHP 
 # ---------------------------------------------------------------
 # Copyleft 2014 Yoander Valdés Rodríguez <http://www.librebyte.net/>
-# Este script es liberado bajos los téminos de la GNU GPL
-# version 2.0 o superior
+# This script is inspired by:
+# and released under GNU GPL 2+ licence  
 # --------------------------------------------------------------
-# Uso:
-# El script recupera todas las base de datos del servidor MySQL
-# especificado en HOST y crea una copia de seguridad para cada
-# una de ellas almacenándolas en el directorio especificado en
-# BACKDIR. Modifique cada variable según sus necesidades. Puede
-# ejecutar el script de forma manual o como tarea programada
+# It's intended to use as helper for PHP compilation process.
+# Enable the most used extensions as: curl, openssl, intl, mysql,
+# pcre, ... and allows to install PHP in custom dir, offers options 
+# to compile PHP with Apache (prefork or worker) or fpm support.
 # -------------------------------------------------------------
-# Última actualización: 31 de mayo del 2010
-# ------------------------------------------------------------- 
 #
 DIR="$(cd "$(dirname "$0" )" && pwd )"
 WEB_USR=www-data
@@ -22,35 +18,31 @@ WEB_GROUP=www-data
 PREFIX=/usr
 MAIN_CONF=
 
-[[ "$@" =~ \-a.*(\-?[cf]) ]] && { echo a and ${BASH_REMATCH[1]} are exclusive options; exit 11; }
+[[ "$@" =~ \-a.*(\-?f) ]] && { echo a and ${BASH_REMATCH[1]} are exclusive options; exit 11; }
 
-(($# <= 1)) && { echo -e 'Wrong number of args type -h for help.'; exit 1; }
+(($# == 0)) && { echo -e 'Wrong number of args type -h for help.'; exit 1; }
 
-while getopts ':acdfp:' OPTION; do
+while getopts ':atfp:' OPTION; do
     case $OPTION in
     a) # Apache support
         MAIN_CONF="--with-apxs2=$(which apxs2)"
 	;;
-    c) # CLI support
-       MAIN_CONF="$MAIN_CONF --enable-cli --enable-pcntl"
-    	;;
     f) # Fast CGI support
         MAIN_CONF="$MAIN_CONF --enable-fpm --with-fpm-user=$WEB_USR --with-fpm-group=$WEB_GROUP"
        ;;
-    d) # Enable Debug
-        MAIN_CONF="$MAIN_CONF --enable-debug --enable-maintainer-zts" 
+    t) # Enable thread safe
+        MAIN_CONF="$MAIN_CONF --enable-maintainer-zts" 
         ;;
     p) # Install prefix
         PREFIX=$OPTARG
         ;;
     ?) # Help
-        echo -e "Usage: build \033[0m \033[32m[-a|[-c -f]] [-d] [-p]\033[0m  \033[33msource_dir"
+        echo -e "Usage: build \033[0m \033[32m[-a|-f] [-d] [-p]\033[0m  \033[33msource_dir"
         echo -e "  Arguments:"
         echo -e "    \033[33msource_dir\033[0m     php source directory, example: '~/php/php-5.4'"
         echo -e "  Options:"
         echo -e "    \033[32m-a\033[0m        build with apache support"
-        echo -e "    \033[32m-c\033[0m        build with cli support"
-        echo -e "    \033[32m-d\033[0m        build with debug enabled"
+        echo -e "    \033[32m-t\033[0m        enable thread safe"
         echo -e "    \033[32m-f\033[0m        build with fpm support"
         echo -e "    \033[32m-p\033[0m        Install DIR prefix"
         echo -e "\n  When finished, run make install afterwards, or make test first"
@@ -97,7 +89,8 @@ MAIN_CONF="--config-cache \
 --mandir=$PREFIX/share/man \
 --with-pear \
 --with-readline \
---disable-cgi \
+--enable-cgi \
+--enable-pcntl \
 $MAIN_CONF"
 
 ESSENTIAL_EXT="--enable-posix \
