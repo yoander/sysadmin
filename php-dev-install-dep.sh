@@ -25,7 +25,7 @@ if egrep -i 'debian|ubuntu' /etc/issue > /dev/null; then
        re2c libtool libstdc++6-4.7-dev
 
     $USER_ALIAS ln -fs /lib/$(arch)-linux-gnu/libpcre.so.3 /usr/lib/libpcre.so && \
-    $USER_ALIAS ln -fs /usr/lib/gcc/$(arch)-linux-gnu/4.7/cc1 /usr/lib/gcc/$(arch)-linux-gnu/4.7/cc1plus && \
+    $USER_ALIAS ln -fs /usr/bin/g++-4.7 /usr/bin/g++ && \
     $USER_ALIAS cp -p /var/www/index.html /var/www/info.php && \
     $USER_ALIAS bash -c "echo '<?php phpinfo();' > /var/www/info.php" && \
 
