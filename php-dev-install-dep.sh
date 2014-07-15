@@ -1,4 +1,4 @@
-#/usr/bin/env bash
+#!/usr/bin/env bash
 
 USR_ALIAS=
 
@@ -7,15 +7,21 @@ if [[ 'root' != $(whoami) ]]; then
     [[ '' == $USER_ALIAS ]] && { echo You need sudo tool for installing php development dependencies!!!; exit 1; }
 fi
 
-APACHE_PREFORK='apache2 apache-mpm-prefork apache2-prefork-dev'
-APACHE_WORKER='apache2 apache-mpm-prefork apache2-prefork-dev'
-NGINX='nginx'
+# Posible value: apache-prefork|apache-worker|nginx
+WEB_SRV='apache-prefork'
 
-# Debian/Ubuntu distro
+#Debian/Ubuntu distro
 if egrep -i 'debian|ubuntu' /etc/issue > /dev/null; then
+    case $WEB_SRV in
+        'apache-prefork') WEB_SRV_PKG='apache2 apache-mpm-prefork apache2-prefork-dev';;
+        'apache-worker') WEB_SRV_PKG=;;
+        'nginx') WEB_SRV_PKG=;;
+        *) echo Unknown web server: adjust the script by yourself, bye!; exit 2;;
+    esac
+    
     $USER_ALIAS apt-get -y install make autoconf gcc libxml2-dev libssl-dev openssl \
          libpcre3-dev libsqlite3-dev libbz2-dev libcurl4-openssl-dev libgd2-xpm-dev \
-         libicu-dev libmcrypt-dev libpq-dev libreadline-dev $APACHE_PREFORK bison \
+         libicu-dev libmcrypt-dev libpq-dev libreadline-dev $WEB_SRV_PKG bison \
          flex re2c libtool g++ libstdc++6-4.7-dev
 
     
