@@ -67,7 +67,11 @@ export EXTENSION_DIR
 PEAR_INSTALLDIR=$PREFIX/share/pear
 export PEAR_INSTALLDIR
 
-[[ ! -d "$SYSCONFDIR" ]] && { echo -e "You must create config dirs: $SYSCONFDIR, $SYSCONFDIR/conf.d"; echo -e Bye!!!; exit 3; } 
+[[ ! -d "$SYSCONFDIR" ]] && { 
+    echo -e "You must create config dirs: $SYSCONFDIR, $SYSCONFDIR/conf.d, $EXTENSION_DIR, $PEAR_INSTALLDIR"
+        echo -e Bye!!!
+        exit 3; 
+} 
 
 [[ ! -d "$EXTENSION_DIR" ]] && { echo -e "You must create extension dir: $EXTENSION_DIR"; echo -e Bye!!!; exit 4; }
 
