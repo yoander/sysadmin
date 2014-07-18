@@ -10,12 +10,14 @@ fi
 # Posible value: apache-prefork|apache-worker|nginx
 WEB_SRV='apache-prefork'
 
+[[ $1 != '' ]] && WEB_SRV=$1
+
 #Debian/Ubuntu distro
 if egrep -i 'debian|ubuntu' /etc/issue > /dev/null; then
     case $WEB_SRV in
         'apache-prefork') WEB_SRV_PKG='apache2 apache2-mpm-prefork apache2-prefork-dev';;
         'apache-worker') WEB_SRV_PKG=;;
-        'nginx') WEB_SRV_PKG=;;
+        'nginx') WEB_SRV_PKG='nginx';;
         *) echo Unknown web server: adjust the script by yourself, bye!; exit 2;;
     esac
 
