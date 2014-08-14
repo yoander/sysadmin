@@ -27,13 +27,17 @@ if egrep -i 'debian|ubuntu' /etc/issue > /dev/null; then
        re2c libtool libstdc++6-4.7-dev
 
     $USER_ALIAS ln -fs /lib/$(arch)-linux-gnu/libpcre.so.3 /usr/lib/libpcre.so && \
-    $USER_ALIAS ln -fs /usr/bin/g++-4.7 /usr/bin/g++ && \
-    $USER_ALIAS cp -p /var/www/index.html /var/www/info.php && \
-    $USER_ALIAS bash -c "echo '<?php phpinfo();' > /var/www/info.php" && \
+    $USER_ALIAS ln -fs /usr/bin/g++-4.7 /usr/bin/g++
 
-    $USER_ALIAS wget https://raw.githubusercontent.com/yoander/sysadmin/master/php5.conf -O /etc/apache2/mods-available/php5.conf && \
-    $USER_ALIAS ln -s /etc/apache2/mods-available/php5.conf /etc/apache2/mods-enabled/php5.conf
-
+    if [[ 'apache-prefork' == $WEB_SRV || 'apache-worker' == $WEB_SRV ]]; then
+        $USER_ALIAS cp -p /var/www/index.html /var/www/info.php && \
+        $USER_ALIAS bash -c "echo '<?php phpinfo();' > /var/www/info.php" && \
+        $USER_ALIAS wget https://raw.githubusercontent.com/yoander/sysadmin/master/php5.conf -O /etc/apache2/mods-available/php5.conf && \
+        $USER_ALIAS ln -s /etc/apache2/mods-available/php5.conf /etc/apache2/mods-enabled/php5.conf
+    elif [[ 'nginx' == $WEB_SRV ]]; then
+        $USER_ALIAS cp -p /usr/share/nginx/html/index.html /usr/share/nginx/html/info.php && \
+        $USER_ALIAS bash -c "echo '<?php phpinfo();' > /usr/share/nginx/html/index.html"
+    fi
 # Centos/RHEL/Fedora distro
 #elif grep -i 'centos|fedora' /etc/issue > /dev/null; then
 #    # Put here yum -y install packages
