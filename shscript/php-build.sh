@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 # GNU shell script to compile PHP 
-# ---------------------------------------------------------------
+# --------------------------------------------------------------------
 # Copyleft 2014 Yoander Valdés Rodríguez <http://www.librebyte.net/>
 # This script is inspired by:
+# <http://github.com/l3pp4rd/dotfiles/blob/master/build/php/build.sh/> 
 # and released under GNU GPL 2+ licence  
-# --------------------------------------------------------------
+# --------------------------------------------------------------------
 # It's intended to use as helper for PHP compilation process.
 # Enable the most used extensions as: curl, openssl, intl, mysql,
 # pcre, ... and allows to install PHP in custom dir, offers options 
 # to compile PHP with Apache (prefork or worker) or fpm support.
-# -------------------------------------------------------------
+# --------------------------------------------------------------------
 #
 DIR="$(cd "$(dirname "$0" )" && pwd )"
 WEB_USR=www-data
