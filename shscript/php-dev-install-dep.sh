@@ -32,7 +32,7 @@ if egrep -i 'debian|ubuntu' /etc/issue > /dev/null; then
     if [[ 'apache-prefork' == $WEB_SRV || 'apache-worker' == $WEB_SRV ]]; then
         $USER_ALIAS cp -p /var/www/index.html /var/www/info.php && \
         $USER_ALIAS bash -c "echo '<?php phpinfo();' > /var/www/info.php" && \
-        $USER_ALIAS wget https://raw.githubusercontent.com/yoander/sysadmin/master/php5.conf -O /etc/apache2/mods-available/php5.conf && \
+        $USER_ALIAS wget https://raw.githubusercontent.com/yoander/sysadmin/master/conf/php5.conf -O /etc/apache2/mods-available/php5.conf && \
         $USER_ALIAS ln -s /etc/apache2/mods-available/php5.conf /etc/apache2/mods-enabled/php5.conf
     elif [[ 'nginx' == $WEB_SRV ]]; then
         $USER_ALIAS cp -p /usr/share/nginx/html/index.html /usr/share/nginx/html/info.php && \
