@@ -1,17 +1,15 @@
 #!/usr/bin/env bash 
 
-# Test connection
+# Connected?
 if ping -c 3 8.8.8.8 > /dev/null 2>&1; then 
-    # Comment pppconnect cron task 
-    sudo -g crontab sed -i 's/\(.*pppconnect\)/#\1/' /var/spool/cron/crontabs/yoander
-    exit 0;
-# Uncomment pppconnect cron task
+    exit 0
+# Not connected? 
 elif sudo -g crontab grep -e '^#.*pppconnect' /var/spool/cron/crontabs/yoander  > /dev/null 2>&1; then
-    sudo -g crontab sed -i 's/^#\(.*pppconnect\)/\1/' /var/spool/cron/crontabs/yoander
+    # pppd is zombie then kill it 
+    PID=$(pgrep -x pppd)
+    [[ '' != $PID ]] && kill -9 $PID
 fi
 
 # Launch dialup connection
-PID=$(pgrep -x pppd)
-[[ '' != $PID ]] && kill -9 $PID
 sleep 2s
 pon $1
