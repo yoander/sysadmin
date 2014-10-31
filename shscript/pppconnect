@@ -4,8 +4,8 @@
 if ping -c 3 8.8.8.8 > /dev/null 2>&1; then 
     exit 0
 # Not connected? 
-elif sudo -g crontab grep -e '^#.*pppconnect' /var/spool/cron/crontabs/yoander  > /dev/null 2>&1; then
-    # pppd is zombie then kill it 
+else
+    # if pppd is zombie then kill it 
     PID=$(pgrep -x pppd)
     [[ '' != $PID ]] && kill -9 $PID
 fi
