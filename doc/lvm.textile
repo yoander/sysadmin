@@ -1,53 +1,53 @@
 h2. LVM
 
-    h3. Grupos
+h3. Grupos
 
-        h4. Crear
+h4. Crear
 
-            bc. # vgcreate <volumenes-fisicos|dispositivos>
+bc. # vgcreate <volumenes-fisicos|dispositivos>
 
-        h4. Reporte
+h4. Reporte
 
-            bc. # vgs
+bc. # vgs
 
-        h4. Listar
+h4. Listar
 
-            bc. # vgdisplay
+bc. # vgdisplay
 
-    h3. PV (Vólumenes Físicos)
+h3. PV (Vólumenes Físicos)
 
-        h4. Crear
+h4. Crear
 
-            bc. # pvcreate <device|partition>
+bc. # pvcreate <device|partition>
         
-        h4. Reporte
+h4. Reporte
             
-            bc. # pvs
+bc. # pvs
             
-        h4. Listar
+h4. Listar
                 
-            bc. # pvdisplay
+bc. # pvdisplay
         
-    h3. LV (Vólumenes Lógicos)
+h3. LV (Vólumenes Lógicos)
         
-        h4. Crear
+h4. Crear
             
-            bc. # lvcreate -L 30G -n nom-volumen-log nombre-grupo
+bc. # lvcreate -L 30G -n nom-volumen-log nombre-grupo
         
-        h4. Listar
+h4. Listar
             
-            bc. # lvdisplay
+bc. # lvdisplay
         
-        h4. Formatear volumen lógico
+h4. Formatear volumen lógico
             
-            bc. # mkfs.ext3 -m 0 /dev/nombre-grupo/nom-volumen-log   [-L label]
+bc. # mkfs.ext3 -m 0 /dev/nombre-grupo/nom-volumen-log   [-L label]
         
-        h4. Montar volumen lógico
+h4. Montar volumen lógico
             
-            Agregar al /etc/fstab
+Agregar al /etc/fstab
             
-            bc. /dev/nombre-grupo/nom-volumen-log       /mnt/some-dir             ext3    defaults,acl    1 2 (ACL es opcional)
+bc. /dev/nombre-grupo/nom-volumen-log       /mnt/some-dir             ext3    defaults,acl    1 2 (ACL es opcional)
             
-            Ó
+Ó
             
-            bc. LABEL=label                             /mnt/some-dir              ext3    defaults,acl    1 2 (ACL es opcional)
+bc. LABEL=label                             /mnt/some-dir              ext3    defaults,acl    1 2 (ACL es opcional)
