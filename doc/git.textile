@@ -2,19 +2,19 @@ h2. Git
     
 h3. Export Git repository (Make visible to everybody for read only access)
 
-# Go to repo dir
+h4. Go to repo dir
         
 bc. cd my-repo
 
-# Create git-daemon-export-ok
+h4. Create git-daemon-export-ok
 
 bc. touch git-daemon-export-ok
 
-# Execute
+h4. Execute
 
 bc. /usr/bin/git daemon --verbose --base-path=PARENT-DIR-OF-MY-REPO --reuseaddr --detach
 
-# Put as cron task for future access
+h4. Put as cron task for future access
 
 bc. @reboot /usr/bin/git daemon --base-path=PARENT-DIR-OF-MY-REPO --reuseaddr --detach
 
@@ -24,13 +24,13 @@ Note: Rewrite history only for commits that are in your local branch
 
 h4. Merge commits
 
-# Do an interactive rebase
+h5. Do an interactive rebase
 
 bc. git rebase -i HEAD~NUM-OF-CI-FROM-HEAD
 
-# Put the target commit after the commit you want to merge with 
+h5. Put the target commit after the commit you want to merge with 
 
-# Put squash or fixup before the target commit
+h5. Put squash or fixup before the target commit
 
 h4. Exclude a file from the last commit
 
