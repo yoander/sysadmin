@@ -4,7 +4,7 @@ h3. Config
 
 useful alias for command line lovers
 
- [alias]
+bc. [alias]
     lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --no-merges
     logme = log --no-merges --author=AUTHOR_NAME
     st = status
