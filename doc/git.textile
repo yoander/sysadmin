@@ -34,14 +34,15 @@ h4. Put as cron task for future access
 
 bc. @reboot /usr/bin/git daemon --base-path=PARENT-DIR-OF-MY-REPO --reuseaddr --detach
 
-
 h3. History
 
-h4. Show history
+h4. Show 
+
+Full history
 
 bc. git log
 
-h4. Show history for the last 2 commits
+Show history for the last 2 commits
 
 bc. git log -n 2
 
@@ -51,16 +52,15 @@ Note: Rewrite history only for commits that are in your local branch
 
 h5. Merge commits
 
-* Do an interactive rebase
+Do an interactive rebase
 
 bc. git rebase -i HEAD~NUM-OF-CI-FROM-HEAD
 
-* Put the target commit after the commit you want to merge with 
+Put the target commit after the commit you want to merge with 
 
-* Put squash or fixup before the target commit
+Put squash or fixup before the target commit
 
 h5. Exclude a file from the last commit
 
 bc. git reset --soft CI
 git reset HEAD fich
-
