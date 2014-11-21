@@ -1,7 +1,7 @@
 #!/usr/bin/env bash 
 
 # Connected?
-if ping -c 3 8.8.8.8 > /dev/null 2>&1; then 
+if ping -c 5 8.8.8.8 > /dev/null 2>&1; then 
     exit 0
 # Not connected? 
 else
