@@ -3,4 +3,6 @@ WIDTH=$(mediainfo --Inform="Video;%Width%" "$1");
 HEIGHT=$(mediainfo --Inform="Video;%Height%" "$1");
 ASPECT=$(mediainfo --Inform="Video;%DisplayAspectRatio%" "$1");
 FILE_NAME=$(basename "$1" | sed -r 's/\.\w+$//')
+(( 720 < $WIDTH )) && WIDTH=720
+(( 576 < $HEIGHT )) && HEIGHT=576
 avconv -i "$1" -f avi -vtag divx -c:v mpeg4 -c:a mp2 -s:v "${WIDTH}x${HEIGHT}" -aspect $ASPECT -qscale 1 "${FILE_NAME}.avi"
