@@ -1,8 +1,22 @@
 #!/usr/bin/env bash
-WIDTH=$(mediainfo --Inform="Video;%Width%" "$1");
-HEIGHT=$(mediainfo --Inform="Video;%Height%" "$1");
-ASPECT=$(mediainfo --Inform="Video;%DisplayAspectRatio%" "$1");
-FILE_NAME=$(basename "$1" | sed -r 's/\.\w+$//')
+QSCALE=1
+if [[ '' == $2 ]]
+then 
+    FILE_NAME="$1"
+else
+    FILE_NAME="$2"
+    case "$1" in
+        'excellent') QSCALE=1;;
+        'good') QSCALE=2;;
+        'regular') QSCALE=3;;
+        'bad') QSCALE=5;;
+    esac
+fi
+
+WIDTH=$(mediainfo --Inform="Video;%Width%" "$FILE_NAME");
+HEIGHT=$(mediainfo --Inform="Video;%Height%" "$FILE_NAME");
+ASPECT=$(mediainfo --Inform="Video;%DisplayAspectRatio%" "$FILE_NAME");
+NEW_FILE_NAME=$(basename "$FILE_NAME" | sed -r 's/\.\w+$//')
 (( 720 < $WIDTH )) && WIDTH=720
 (( 576 < $HEIGHT )) && HEIGHT=576
-avconv -i "$1" -f avi -vtag divx -c:v mpeg4 -c:a mp2 -s:v "${WIDTH}x${HEIGHT}" -aspect $ASPECT -qscale 1 "${FILE_NAME}.avi"
+avconv -i "$FILE_NAME" -f avi -vtag divx -c:v mpeg4 -c:a mp2 -s:v "${WIDTH}x${HEIGHT}" -aspect $ASPECT -qscale $QSCALE "${NEW_FILE_NAME}.avi"
