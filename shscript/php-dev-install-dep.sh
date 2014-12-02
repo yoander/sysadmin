@@ -16,7 +16,7 @@ WEB_SRV='apache-prefork'
 if egrep -i 'debian|ubuntu' /etc/issue > /dev/null; then
     case $WEB_SRV in
         'apache-prefork') WEB_SRV_PKG='apache2 apache2-mpm-prefork apache2-prefork-dev';;
-        'apache-worker') WEB_SRV_PKG=;;
+        'apache-worker') WEB_SRV_PKG='apache2 apache2-mpm-worker apache2-threaded-dev';;
         'nginx') WEB_SRV_PKG='nginx';;
         *) echo Unknown web server: adjust the script by yourself, bye!; exit 2;;
     esac
