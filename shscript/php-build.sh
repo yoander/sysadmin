@@ -32,7 +32,7 @@ while getopts ':atfp:' OPTION; do
         MAIN_CONF="$MAIN_CONF --enable-fpm --with-fpm-user=$WEB_USR --with-fpm-group=$WEB_GROUP"
        ;;
     t) # Enable thread safe
-        MAIN_CONF="$MAIN_CONF --enable-maintainer-zts" 
+        MAIN_CONF="$MAIN_CONF --with-tsrm-pthreads --enable-maintainer-zts" 
         ;;
     p) # Install prefix
         PREFIX=$OPTARG
