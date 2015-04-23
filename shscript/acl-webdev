@@ -1,64 +1,63 @@
-function setfullacl() {
-	local target=$(pwd)
-	local user=nobody
-	local group=nogroup 
-	
-	# ACL target file
-	if [[ '' != "$1" ]]; then
-		if [[ ! -e "$1" ]]; then
-			echo "File no exists: $1" 
-			return 1
-		fi
-		target="$1"
-	fi
+#!/usr/bin/env bash
+target=$(pwd)
+user=nobody
+group=nogroup
 
-	# ACL target user and group
-	if [[ "$2" =~ ([[:alpha:]]*-?[[:alpha:]]*):([[:alpha:]]*-?[[:alpha:]]*) ]]; then
-		user=${BASH_REMATCH[1]}
-		group=${BASH_REMATCH[2]}
-	elif [[ '' != "$2" ]]; then
-		user="$2"
-		group=
-	fi
+# ACL target file
+if [[ '' != "$1" ]]; then
+    if [[ ! -e "$1" ]]; then
+        echo "File no exists: $1"
+        exit 1
+    fi
+    target="$1"
+fi
 
-	if ! grep "^$user:" /etc/passwd 1> /dev/null; then 
-		echo "User not exists: $user"
-		 return 2
-	fi
-	
-	if [[ '' != $group ]] && ! grep "^$group:" /etc/group 1> /dev/null; then
-		echo "Group not exists: $group"
-		return 3
-	fi
+# ACL target user and group
+if [[ "$2" =~ ([[:alpha:]]*-?[[:alpha:]]*):([[:alpha:]]*-?[[:alpha:]]*) ]]; then
+    user=${BASH_REMATCH[1]}
+    group=${BASH_REMATCH[2]}
+elif [[ '' != "$2" ]]; then
+    user="$2"
+    group=
+fi
 
-	echo Full acl will be set to "$target", user: "$user", group: "$group"
+if ! grep "^$user:" /etc/passwd 1> /dev/null; then
+    echo "User not exists: $user"
+        exit 2
+fi
 
-	read -p "Do you want to continue [y|n]:" answer
+if [[ '' != $group ]] && ! grep "^$group:" /etc/group 1> /dev/null; then
+    echo "Group not exists: $group"
+    exit 3
+fi
 
-        case "$answer" in
-		[yY1])
-			if [[ -f $target ]]; then
-				if [[ '' != $group ]]; then
-					setfacl -m u:$USER:rw,g:$GROUPS:rw,u:$user:rw,g:$group:rw,o:r $target
-				else
-					setfacl -m u:$USER:rw,g:$GROUPS:rw,u:$user:rw,o:r $target
-				fi
-			elif [[ -d $target ]]; then
-				if [[ '' != $group ]]; then
-					find $target -type d -print0 | xargs -0 setfacl -m u:$USER:rwx,g:$GROUPS:rxw,u:$user:rwx,g:$grop:rwx,o:rx,d:u:$USER:rwx,d:g:$GROUPS:rwx,d:u:$user:rwx,d:g:$group:rwx,d:o:rx
-					find $target -type f -print0 | xargs -0 -I{} setfacl -m u:$USER:rw,g:$GROUPS:rw,u:$user:rw,g:$group:rw,o:r {}	
-				else
-					find $target -type d -print0 | xargs -0 setfacl -m u:$USER:rwx,g:$GROUPS:rwx,u:$user:rwx,o:rx,d:u:$USER:rwx,d:g:$GROUPS:rwx,d:u:$user:rwx,d:o:rx
-					find $target -type f -print0 | xargs -0 -I{} setfacl -m u:$USER:rw,g:$GROUPS:rw,u:$user:rw,o:r {}	
-				fi
-			fi
-			;;
-		[nN0]) 
-			return 0;	
-			;;
-		# error check 
-		*) echo -e "%b" "Unexpected answer: $answer" >&2 ;;
-	esac
-	
-	return 0	
-}
+echo Full acl will be set to "$target", user: "$user", group: "$group"
+
+read -p "Do you want to continue [y|n]:" answer
+
+    case "$answer" in
+    [yY1])
+        if [[ -f $target ]]; then
+            if [[ '' != $group ]]; then
+                setfacl -m u:$USER:rw,g:$GROUPS:rw,u:$user:rw,g:$group:rw,o:rw $target
+            else
+                setfacl -m u:$USER:rw,g:$GROUPS:rw,u:$user:rw,o:rw $target
+            fi
+        elif [[ -d $target ]]; then
+            if [[ '' != $group ]]; then
+                find $target -type d -print0 | xargs -0 setfacl -m u:$USER:rwx,g:$GROUPS:rxw,u:$user:rwx,g:$grop:rwx,o:rwx,d:u:$USER:rwx,d:g:$GROUPS:rwx,d:u:$user:rwx,d:g:$group:rwx,d:o:rwx
+                find $target -type f -print0 | xargs -0 -I{} setfacl -m u:$USER:rw,g:$GROUPS:rw,u:$user:rw,g:$group:rw,o:rw {}
+            else
+                find $target -type d -print0 | xargs -0 setfacl -m u:$USER:rwx,g:$GROUPS:rwx,u:$user:rwx,o:rwx,d:u:$USER:rwx,d:g:$GROUPS:rwx,d:u:$user:rwx,d:o:rwx
+                find $target -type f -print0 | xargs -0 -I{} setfacl -m u:$USER:rw,g:$GROUPS:rw,u:$user:rw,o:rw {}
+            fi
+        fi
+        ;;
+    [nN0])
+        exit 0;
+        ;;
+    # error check
+    *) echo -e "%b" "Unexpected answer: $answer" >&2 ;;
+esac
+
+exit 0
