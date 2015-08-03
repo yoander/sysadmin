@@ -164,4 +164,6 @@ fi
 
 ./configure ${MAIN_CONF} ${ESSENTIAL_EXT} ${SYSV_SUPPORT} 
 
+export LDFLAGS="$LDFLAGS -lpthread"
+
 make
