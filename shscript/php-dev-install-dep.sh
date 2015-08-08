@@ -38,10 +38,12 @@ if egrep -i 'debian|ubuntu' /etc/issue > /dev/null; then
         $USER_ALIAS cp -p /usr/share/nginx/www/index.html /usr/share/nginx/www/info.php && \
         $USER_ALIAS bash -c "echo '<?php phpinfo();' > /usr/share/nginx/www/info.php"
     fi
-# Centos/RHEL/Fedora distro
-#elif grep -i 'centos|fedora' /etc/issue > /dev/null; then
-#    # Put here yum -y install packages
-#    echo Put your package manager
+# Centos/RHEL distro
+elif grep -i 'centos|fedora' /etc/issue > /dev/null; then
+    # Put here yum -y install packages
+    $USER_ALIAS yum -y install gcc make autoconf flex bison libtool libstdc++-devel \
+        epel-release libxml2-devel openssl openssl-devel pcre-devel sqlite-devel bzip2-devel \
+        libcurl-devel libicu-devel gd-devel readline-devel libmcrypt-devel
 else
     echo This is script is intended for Debian GNU/Linux base family distro.\
         If you are using another GNU/Linux distribution then you need to adjust the script\
