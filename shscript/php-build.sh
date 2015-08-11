@@ -23,12 +23,15 @@ MAIN_CONF=
 
 (($# == 0)) && { echo -e 'Wrong number of args type -h for help.'; exit 1; }
 
-while getopts ':atfp:' OPTION; do
+while getopts ':atfsp:' OPTION; do
     case $OPTION in
     a) # Apache support
         MAIN_CONF="--with-apxs2=$(which apxs2)"
 	;;
     f) # Fast CGI support
+        MAIN_CONF="$MAIN_CONF --enable-fpm --with-fpm-user=$WEB_USR --with-fpm-group=$WEB_GROUP"
+       ;;
+    s) # Activate systemd integration
         MAIN_CONF="$MAIN_CONF --enable-fpm --with-fpm-user=$WEB_USR --with-fpm-group=$WEB_GROUP"
        ;;
     t) # Enable thread safe
@@ -45,6 +48,7 @@ while getopts ':atfp:' OPTION; do
         echo -e "    \033[32m-a\033[0m        build with apache support"
         echo -e "    \033[32m-t\033[0m        enable thread safe"
         echo -e "    \033[32m-f\033[0m        build with fpm support"
+        echo -e "    \033[32m-s\033[0m        build with fpm support"
         echo -e "    \033[32m-p\033[0m        Install DIR prefix"
         echo -e "\n  When finished, run make install afterwards, or make test first"
         exit
