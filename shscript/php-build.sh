@@ -41,7 +41,7 @@ while getopts ':atfsp:' OPTION; do
         PREFIX=$OPTARG
         ;;
     ?) # Help
-        echo -e "Usage: build \033[0m \033[32m[-a|-f] [-d] [-p]\033[0m  \033[33msource_dir"
+        echo -e "Usage: build \033[0m \033[32m[-a|-f] [-s] [-d] [-p]\033[0m  \033[33msource_dir"
         echo -e "  Arguments:"
         echo -e "    \033[33msource_dir\033[0m     php source directory, example: '~/php/php-5.4'"
         echo -e "  Options:"
