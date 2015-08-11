@@ -48,7 +48,7 @@ while getopts ':atfsp:' OPTION; do
         echo -e "    \033[32m-a\033[0m        build with apache support"
         echo -e "    \033[32m-t\033[0m        enable thread safe"
         echo -e "    \033[32m-f\033[0m        build with fpm support"
-        echo -e "    \033[32m-s\033[0m        build with fpm support"
+        echo -e "    \033[32m-s\033[0m        activate fpm systemd integration"
         echo -e "    \033[32m-p\033[0m        Install DIR prefix"
         echo -e "\n  When finished, run make install afterwards, or make test first"
         exit
