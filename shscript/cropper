@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+( ! which identify convert &>/dev/null ) && { echo You must install ImageMagick suite; exit 1; }
+PATTERN='.*\.(jpe?g|png|gif|tiff)$'
+find $(pwd) -regextype posix-egrep -iregex $PATTERN -type f -print0 | while read -d $'' file; do 
+    size=$(identify "$file" | awk '{ print $3 }' | awk -Fx -v to_crop=100 '{ print $1"x"$2-to_crop}')
+    cropped_name=$(dirname $file)/cropped_$(basename "$file")
+    convert "$file" -crop $size+0+0 "$cropped_name"
+    [[ -e "$cropped_name" ]] && mv -f "$cropped_name" "$file"
+done
