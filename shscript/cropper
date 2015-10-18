@@ -1,9 +1,32 @@
 #!/usr/bin/env bash
+# GNU shell script to image mass cropping
+# --------------------------------------------------------------------------
+# Copyleft (Ɔ) Yoander Valdés(sedlav) Rodríguez <http://www.librebyte.net/>
+# This script is released under GNU GPL 2+ licence   
+# --------------------------------------------------------------------------
+# Use:
+#
+# This script find all image under current dir, calculate new size and crop
+# every image, later rename it to the original name.
+# --------------------------------------------------------------------------
+#
+# Verify if ImageMagick suite is installed
+# 
 ( ! which identify convert &>/dev/null ) && { echo You must install ImageMagick suite; exit 1; }
+#
+# Pattern for jpg, jpeg, png, gif, tiff files
+#
 PATTERN='.*\.(jpe?g|png|gif|tiff)$'
+#
+# Find and read every file that match above pattern in current DIR
+#
 find $(pwd) -regextype posix-egrep -iregex $PATTERN -type f -print0 | while read -d $'' file; do 
-    size=$(identify "$file" | awk '{ print $3 }' | awk -Fx -v to_crop=100 '{ print $1"x"$2-to_crop}')
+    # Get the image new size
+    size=$(identify "$file" | awk '{ print $3 }' | awk -Fx -v to_crop=20 '{ print $1"x"$2-to_crop}')
+    # New file name
     cropped_name=$(dirname $file)/cropped_$(basename "$file")
+    # Crop the image
     convert "$file" -crop $size+0+0 "$cropped_name"
+    # Rename to original name
     [[ -e "$cropped_name" ]] && mv -f "$cropped_name" "$file"
 done
