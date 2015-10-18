@@ -6,13 +6,17 @@
 # --------------------------------------------------------------------------
 # Use:
 #
-# This script find all image under current dir, calculate new size and crop
+# This script find all image under current DIR, calculate new size and crop
 # every image, later rename it to the original name.
 # --------------------------------------------------------------------------
 #
 # Verify if ImageMagick suite is installed
 # 
 ( ! which identify convert &>/dev/null ) && { echo You must install ImageMagick suite; exit 1; }
+#
+# Ask for original file keeping
+#
+read -p "Do you want to keep original file [y|n]:" answer
 #
 # Pattern for jpg, jpeg, png, gif, tiff files
 #
@@ -28,5 +32,5 @@ find $(pwd) -regextype posix-egrep -iregex $PATTERN -type f -print0 | while read
     # Crop the image
     convert "$file" -crop $size+0+0 "$cropped_name"
     # Rename to original name
-    [[ -e "$cropped_name" ]] && mv -f "$cropped_name" "$file"
+    [[ $answer =~ ^[0Nn]$ ]] && [[ -e "$cropped_name" ]] && mv -f "$cropped_name" "$file"
 done
