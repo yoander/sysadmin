@@ -22,8 +22,6 @@ if egrep -i 'debian|ubuntu' /etc/issue > /dev/null; then
         '') WEB_SRV_PKG=;; 
         *) echo Unknown web server: adjust the script by yourself, bye!; exit 2;;
     esac
-    echo $WEB_SRV_PKG
-    exit
    $USER_ALIAS  apt-get install -y make autoconf gcc libxml2-dev libssl-dev openssl \
        libpcre3-dev libsqlite3-dev libbz2-dev libcurl4-openssl-dev libgd2-xpm-dev \
        libicu-dev libmcrypt-dev libpq-dev libreadline-dev $WEB_SRV_PKG bison flex \
