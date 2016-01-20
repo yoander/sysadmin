@@ -7,7 +7,9 @@
 # Use:
 #
 # This script find all image under current DIR, calculate new size and crop
-# every image, later rename it to the original name.
+# every image. This script asks if you want to keep original file or 
+# override it. Download the script give it exec perms and put it on 
+# /usr/local/bin
 # --------------------------------------------------------------------------
 #
 # Verify if ImageMagick suite is installed
