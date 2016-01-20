@@ -9,17 +9,24 @@ bc. [alias]
     logme = log --no-merges --author=AUTHOR_NAME
     st = status
     ci = commit
-    cia = commit --amend
     co = checkout
     br = branch
     a = add
     cp = cherry-pick
     mg = merge
+    amend = commit --amend
+    unstg = reset HEAD --
+    # Do not delete file from the working tree
+    rm = rm --cached
+    # Delete file from the index and working tree    
+    del = rm
+    rs = reset
+    rb = rebase
 
 h3. Export Git repository (Make visible to everybody for read only access)
 
 h4. Go to repo dir
-        
+
 bc. cd my-repo
 
 h4. Create git-daemon-export-ok
@@ -36,7 +43,7 @@ bc. @reboot /usr/bin/git daemon --base-path=PARENT-DIR-OF-MY-REPO --reuseaddr --
 
 h3. History
 
-h4. Show 
+h4. Show
 
 Full history
 
@@ -56,11 +63,11 @@ Do an interactive rebase
 
 bc. git rebase -i HEAD~NUM-OF-CI-FROM-HEAD
 
-Put the target commit after the commit you want to merge with 
+Put the target commit after the commit you want to merge with
 
 Put squash or fixup before the target commit
 
 h5. Exclude a file from the last commit
 
-bc. git reset --soft CI
+bc. git reset --soft HEAD~1
 git reset HEAD fich
