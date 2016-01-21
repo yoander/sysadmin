@@ -25,7 +25,9 @@ if egrep -i 'debian|ubuntu' /etc/issue > /dev/null; then
    $USER_ALIAS  apt-get install -y make autoconf gcc libxml2-dev libssl-dev openssl \
        libpcre3-dev libsqlite3-dev libbz2-dev libcurl4-openssl-dev libgd2-xpm-dev \
        libicu-dev libmcrypt-dev libpq-dev libreadline-dev $WEB_SRV_PKG bison flex \
-       re2c libtool libstdc++6-4.7-dev
+       re2c libtool \
+       # Hack to get the last version of libstdc in Debian
+       $(apt-cache search --names-only 'libstdc\+\+.+-dev'|sort -r|head -n 1|awk '{print $1}') 
 
     $USER_ALIAS ln -fs /lib/$(arch)-linux-gnu/libpcre.so.3 /usr/lib/libpcre.so && \
     $USER_ALIAS ln -fs /usr/bin/g++-4.7 /usr/bin/g++
