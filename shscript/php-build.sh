@@ -115,7 +115,6 @@ ESSENTIAL_EXT="--enable-posix \
 --with-png-dir=shared,/usr \
 --with-freetype-dir=/usr \
 --with-curl=/usr/bin \
---with-regex=php \
 --with-pcre-regex=/usr \
 --with-zlib-dir=/usr \
 --with-mysqli=mysqlnd \
