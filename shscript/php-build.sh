@@ -126,8 +126,6 @@ ESSENTIAL_EXT="--enable-posix \
 --with-icu-dir=/usr \
 --with-gettext \
 --with-iconv-dir=/usr \
---with-sqlite3=/usr \
---with-pdo-sqlite \
 --enable-phar \
 --enable-ftp \
 " 
