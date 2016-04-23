@@ -5,10 +5,11 @@ import HTMLParser as parser
 import xml.dom.minidom as minidom
 import sys
 
-# Open the file
-#file = open(os.getenv('GEDIT_CURRENT_DOCUMENT_PATH'), 'r')
+# Read an enviroment variable 
+# env = os.getenv('GEDIT_CURRENT_DOCUMENT_PATH')
 
 try:
+    # Read de file name from standard input
     filename = sys.argv[1]
     if os.path.isfile(filename) and os.access(filename, os.R_OK):
         # Open the file in read only mode
