@@ -7,8 +7,8 @@ if (empty($argv[1])) {
 
 $file = $argv[1];
 
-if (is_dir($file)) {
-    die('The file to parse must be a regular file');
+if (!is_readable($file)) {
+    die('File is missing or is not readable!');
 }
 
 $content = file_get_contents($file);
@@ -19,9 +19,11 @@ if (empty($content)) {
 
 $content = html_entity_decode($content);
 
+$content = preg_replace('/^s:\d+:"|";$/', '', $content);
+
 $doc = new DOMDocument('1.0');
 $doc->preserveWhiteSpace = false;
 $doc->formatOutput = true;
-$doc->loadXML($content);
+$doc->loadXML($content, LIBXML_NOENT);
 
 echo $doc->saveXML();
