@@ -39,17 +39,17 @@ read -p "Do you want to continue [y|n]:" answer
     [yY1])
         if [[ -f $target ]]; then
             if [[ '' != $group ]]; then
-                setfacl -m u:$USER:rw,g:$GROUPS:rw,u:$user:rw,g:$group:rw,o:r $target
+                setfacl -m u::rw,g::rw,u:$user:rw,g:$group:rw,o:r $target
             else
-                setfacl -m u:$USER:rw,g:$GROUPS:rw,u:$user:rw,o:r $target
+                setfacl -m u::rw,g::rw,u:$user:rw,o:r $target
             fi
         elif [[ -d $target ]]; then
             if [[ '' != $group ]]; then
-                find $target -type d -print0 | xargs -0 setfacl -m u:$USER:rwx,g:$GROUPS:rxw,u:$user:rwx,g:$grop:rwx,o:rx,d:u:$USER:rwx,d:g:$GROUPS:rwx,d:u:$user:rwx,d:g:$group:rwx,d:o:rx
-                find $target -type f -print0 | xargs -0 -I{} setfacl -m u:$USER:rw,g:$GROUPS:rw,u:$user:rw,g:$group:rw,o:r {}
+                find "$target" -type d -print0 | xargs -0 setfacl --set u::rwx,g::rxw,u:$user:rwx,g:$group:rwx,o:rx,m:rwx,d:u::rwx,d:g::rwx,d:u:$user:rwx,d:g:$group:rwx,d:o:rx,d:m:rwx
+                find "$target" -type f -print0 | xargs -0 -I{} setfacl --set u::rw,g::rw,u:$user:rw,g:$group:rw,o:r,m:rw {}
             else
-                find $target -type d -print0 | xargs -0 setfacl -m u:$USER:rwx,g:$GROUPS:rwx,u:$user:rwx,o:rx,d:u:$USER:rwx,d:g:$GROUPS:rwx,d:u:$user:rwx,d:o:rx
-                find $target -type f -print0 | xargs -0 -I{} setfacl -m u:$USER:rw,g:$GROUPS:rw,u:$user:rw,o:r {}
+                find "$target" -type d -print0 | xargs -0 setfacl --set u::rwx,g::rwx,u:$user:rwx,o:rx,m:rwx,d:u::rwx,d:g::rwx,d:u:$user:rwx,d:o:rx,d:m:rwx
+                find "$target" -type f -print0 | xargs -0 -I{} setfacl --set u::rw,g::rw,u:$user:rw,o:r,m:rw {}
             fi
         fi
         ;;
