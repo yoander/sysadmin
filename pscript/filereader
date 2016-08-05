@@ -1,4 +1,5 @@
 #!/usr/bin/env perl
+# This script is released under GPL V2+
 open(FILEREAD, "< /home/yoander/projects/cake/.perms");
 my @arr;
 while (<FILEREAD>) {
