@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# GNU shell script to compile PHP 
+# GNU shell script to compile PHP
 # --------------------------------------------------------------------
 # Copyleft 2014 Yoander Valdés Rodríguez <http://www.librebyte.net/>
-# This script is released under GNU GPL 2+ licence  
+# This script is released under GNU GPL 2+ licence
 # --------------------------------------------------------------------
 # It's intended to use as helper for PHP compilation process.
 # Enable the most used extensions as: curl, openssl, intl, mysql,
-# pcre, ... and allows to install PHP in custom dir, offers options 
+# pcre, ... and allows to install PHP in custom dir, offers options
 # to compile PHP with Apache (prefork or worker) or fpm support.
 # --------------------------------------------------------------------
 #
@@ -25,7 +25,7 @@ while getopts ':atfsp:' OPTION; do
     case $OPTION in
     a) # Apache support
         MAIN_CONF="--with-apxs2=$(which apxs2)"
-	;;
+    ;;
     f) # Fast CGI support
         MAIN_CONF="$MAIN_CONF --enable-fpm --with-fpm-user=$WEB_USR --with-fpm-group=$WEB_GROUP"
        ;;
@@ -33,7 +33,7 @@ while getopts ':atfsp:' OPTION; do
         MAIN_CONF="$MAIN_CONF --with-fpm-systemd"
        ;;
     t) # Enable thread safe
-        MAIN_CONF="$MAIN_CONF --with-tsrm-pthreads --enable-maintainer-zts" 
+        MAIN_CONF="$MAIN_CONF --with-tsrm-pthreads --enable-maintainer-zts"
         ;;
     p) # Install prefix
         PREFIX=$OPTARG
@@ -50,16 +50,16 @@ while getopts ':atfsp:' OPTION; do
         echo -e "    \033[32m-p\033[0m        Install DIR prefix"
         echo -e "\n  When finished, run make install afterwards, or make test first"
         exit
-	;;
+    ;;
     esac
 done
 shift $(($OPTIND - 1))
 
 [[ ! -d "$1" ]]&& { echo Php source is not valid directory; exit 2; }
 
-if [[ "$PREFIX" =~ ^/usr/local/?$ ]]; then 
-    SYSCONFDIR=$PREFIX/etc/php 
-elif [[ "$PREFIX" =~ ^/usr/?$ ]]; then 
+if [[ "$PREFIX" =~ ^/usr/local/?$ ]]; then
+    SYSCONFDIR=$PREFIX/etc/php
+elif [[ "$PREFIX" =~ ^/usr/?$ ]]; then
     SYSCONFDIR=/etc/php
 else
     echo -e "Invalid install dir: $PREFIX"
@@ -70,13 +70,16 @@ export EXTENSION_DIR
 PEAR_INSTALLDIR=$PREFIX/share/pear
 export PEAR_INSTALLDIR
 
-[[ ! -d "$SYSCONFDIR" ]] && { 
+[[ ! -d "$SYSCONFDIR" ]] && {
     echo -e "You must create config dirs: $SYSCONFDIR, $SYSCONFDIR/conf.d, $EXTENSION_DIR, $PEAR_INSTALLDIR"
         echo -e Bye!!!
-        exit 3; 
-} 
+        exit 3;
+}
 
-[[ ! -d "$EXTENSION_DIR" ]] && { echo -e "You must create extension dir: $EXTENSION_DIR"; echo -e Bye!!!; exit 4; }
+[[ ! -d "$EXTENSION_DIR" ]] && {
+    echo -e "You must create extension dir: $EXTENSION_DIR";
+    echo -e Bye!!!; exit 4;
+}
 
 [[ ! -d "$PEAR_INSTALLDIR" ]] && { echo -e "You must create PEAR dir: $PEAR_INSTALLDIR"; echo -e Bye!!!; exit 5; }
 
@@ -128,7 +131,7 @@ ESSENTIAL_EXT="--enable-posix \
 --with-iconv-dir=/usr \
 --enable-phar \
 --enable-ftp \
-" 
+"
 
 # System V semaphore support
 SYSV_SUPPORT="--enable-sysvmsg \
@@ -143,12 +146,12 @@ PG_SUPPORT="
 
 EXTRA_OPTS="--enable-exif \
 --enable-calendar \
---with-snmp=/usr \ 
+--with-snmp=/usr \
 --with-pspell \
 --with-tidy=/usr \
 --with-xmlrpc \
 --with-xsl=/usr"
- 
+
 
 if [[ "$1" =~ [[:digit:]]+(\.[[:digit:]]+)? ]]; then
     [[ ${BASH_REMATCH} > 5 ]] && MAIN_CONF="$MAIN_CONF --enable-opcache"
@@ -161,7 +164,7 @@ if [ ! -f "$DIR/configure" ]; then
 fi
 
 
-./configure ${MAIN_CONF} ${ESSENTIAL_EXT} ${SYSV_SUPPORT} 
+./configure ${MAIN_CONF} ${ESSENTIAL_EXT} ${SYSV_SUPPORT}
 
 export LDFLAGS="$LDFLAGS -lpthread"
 
