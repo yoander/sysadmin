@@ -45,7 +45,8 @@ elif grep -i 'centos' /etc/redhat-release > /dev/null; then
     # Put here yum -y install packages
     $USER_ALIAS yum -y install gcc gcc-c++ make autoconf flex bison libtool libstdc++-devel \
         epel-release libxml2-devel openssl openssl-devel pcre-devel sqlite-devel bzip2-devel \
-        libcurl-devel libicu-devel gd-devel readline-devel libmcrypt-devel
+        libcurl-devel libicu-devel gd-devel readline-devel libmcrypt-devel $WEB_SRV_PKG
+    $USER_ALIAS ln -fs /usr/lib64/libpcre.so.1.2.0 /usr/lib/libpcre.so
 else
     echo This is script is intended for Debian GNU/Linux base family distro.\
         If you are using another GNU/Linux distribution then you need to adjust the script\
