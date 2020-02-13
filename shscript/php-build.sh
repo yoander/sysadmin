@@ -10,6 +10,8 @@
 # to compile PHP with Apache (prefork or worker) or fpm support.
 # --------------------------------------------------------------------
 #
+# This script is deprecated in favor of: https://notabug.org/sedlav/butterfly-builder
+#
 DIR="$(cd "$(dirname "$0" )" && pwd )"
 WEB_USR=www-data
 WEB_GROUP=www-data
